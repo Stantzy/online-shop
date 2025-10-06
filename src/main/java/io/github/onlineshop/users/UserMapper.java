@@ -7,8 +7,6 @@ import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.domain.User;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 @Component
 public class UserMapper {
     public UserDto toUserDto(User user) {
