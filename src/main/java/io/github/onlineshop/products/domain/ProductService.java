@@ -5,6 +5,7 @@ import io.github.onlineshop.products.api.dto.ProductDto;
 import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.products.database.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -102,5 +103,11 @@ public class ProductService {
     public void deleteProduct(Long id) {
         log.info("Called method deleteProduct: id={}", id);
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteProductByName(String name) {
+        log.info("Called method deleteProductByName: name={}", name);
+        repository.deleteByName(name);
     }
 }

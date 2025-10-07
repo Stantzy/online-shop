@@ -1,8 +1,12 @@
 package io.github.onlineshop.users.api;
 
-import io.github.onlineshop.users.api.dto.UserCreateRequest;
-import io.github.onlineshop.users.api.dto.UserCreateResponse;
+import io.github.onlineshop.constants.PathConstants;
+import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
+import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
+import io.github.onlineshop.users.api.dto.request.UserPasswordChangeRequest;
+import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
 import io.github.onlineshop.users.api.dto.UserDto;
+import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.domain.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(PathConstants.USER)
 public class UserController {
     private static final Logger log =
             LoggerFactory.getLogger(UserController.class);
@@ -46,5 +50,33 @@ public class UserController {
         log.info("Called method createUser");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(userToCreate));
+    }
+
+    @PutMapping("/{id}/update_user")
+    public ResponseEntity<UserModifyResponse> updateUser(
+            @RequestBody UserModifyRequest userToModify
+    ) {
+        log.info("Called method updateUser");
+        return ResponseEntity.ok(userService.updateUser(userToModify));
+    }
+
+    @PutMapping("/{id}/change_password")
+    public ResponseEntity<Boolean> changePassword(
+            @PathVariable Long id,
+            @RequestBody UserPasswordChangeRequest passwordChangeRequest
+    ) {
+        log.info("Called method changePassword: id={}", id);
+        return ResponseEntity.ok(
+                userService.changePassword(id, passwordChangeRequest)
+        );
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<Void> deleteUserById(
+            @PathVariable Long id
+    ) {
+        log.info("Called method deleteUserById: id={}", id);
+        userService.deleteUserById(id);
+        return ResponseEntity.ok().build();
     }
 }

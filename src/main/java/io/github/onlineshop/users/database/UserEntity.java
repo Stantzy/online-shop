@@ -1,8 +1,10 @@
 package io.github.onlineshop.users.database;
 
+import io.github.onlineshop.orders.database.OrderEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -23,6 +25,9 @@ public class UserEntity {
 
     @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate;
+
+    @OneToMany(mappedBy = "orderOwner")
+    private List<OrderEntity> orders;
 
     public UserEntity() {}
 
@@ -64,5 +69,13 @@ public class UserEntity {
 
     public void setRegistrationDate(LocalDate registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public List<OrderEntity> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderEntity> orders) {
+        this.orders = orders;
     }
 }

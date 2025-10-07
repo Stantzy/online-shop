@@ -1,8 +1,10 @@
 package io.github.onlineshop.products.database;
 
+import io.github.onlineshop.orders.database.OrderEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -19,6 +21,9 @@ public class ProductEntity {
 
     @Column(name = "price")
     private BigDecimal price;
+
+    @ManyToMany(mappedBy = "products")
+    private List<OrderEntity> orders;
 
     public ProductEntity() {}
 
@@ -52,5 +57,13 @@ public class ProductEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public List<OrderEntity> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderEntity> orders) {
+        this.orders = orders;
     }
 }

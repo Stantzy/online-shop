@@ -1,4 +1,4 @@
-package io.github.onlineshop.users.api.dto;
+package io.github.onlineshop.users.api.dto.request;
 
 public record UserCreateRequest(
         String username,

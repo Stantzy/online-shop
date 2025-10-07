@@ -1,9 +1,12 @@
 package io.github.onlineshop.users.domain;
 
 import io.github.onlineshop.users.UserMapper;
-import io.github.onlineshop.users.api.dto.UserCreateRequest;
-import io.github.onlineshop.users.api.dto.UserCreateResponse;
+import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
+import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
+import io.github.onlineshop.users.api.dto.request.UserPasswordChangeRequest;
+import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
 import io.github.onlineshop.users.api.dto.UserDto;
+import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.database.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -67,12 +70,60 @@ public class UserService {
                 userToCreate.username(),
                 userToCreate.email(),
                 encoder.encode(userToCreate.password()),
-                LocalDate.now()
+                LocalDate.now(),
+                null
         );
 
         UserEntity entityToSave = mapper.toUserEntity(userToSave);
         UserEntity savedEntity = repository.save(entityToSave);
 
         return mapper.toCreateResponse(savedEntity);
+    }
+
+    public UserModifyResponse updateUser(UserModifyRequest userToModify) {
+        log.info("Called method updateUser");
+        UserEntity entityToUpdate =
+                        repository.findByUsername(userToModify.username())
+                                .orElseThrow(() -> new EntityNotFoundException(
+                                        "Not found user by name " +
+                                        userToModify.username())
+                                );
+
+        entityToUpdate.setUsername(userToModify.username());
+        entityToUpdate.setEmail(userToModify.email());
+
+        UserEntity updatedEntity = repository.save(entityToUpdate);
+
+        return mapper.toModifyResponse(updatedEntity);
+    }
+
+    public Boolean changePassword(
+            Long id,
+            UserPasswordChangeRequest passwordChangeRequest
+    ) {
+        log.info("Called method changePassword: id={}", id);
+
+        UserEntity userEntity =
+                repository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Not found user by id=" + id)
+                        );
+
+        boolean isMatch = encoder.matches(
+                passwordChangeRequest.oldPassword(), userEntity.getPasswordHash()
+        );
+        if(!isMatch) {
+            throw new IllegalArgumentException("Old password is wrong");
+        }
+        userEntity.setPasswordHash(
+                encoder.encode(passwordChangeRequest.newPassword())
+        );
+        repository.save(userEntity);
+        return true;
+    }
+
+    public void deleteUserById(Long id) {
+        log.info("Called method deleteUserById: id={}", id);
+        repository.deleteById(id);
     }
 }

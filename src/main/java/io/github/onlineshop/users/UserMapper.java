@@ -1,19 +1,32 @@
 package io.github.onlineshop.users;
 
-import io.github.onlineshop.users.api.dto.UserCreateRequest;
-import io.github.onlineshop.users.api.dto.UserCreateResponse;
+import io.github.onlineshop.orders.OrderMapper;
+import io.github.onlineshop.orders.api.dto.OrderDto;
+import io.github.onlineshop.orders.database.OrderEntity;
+import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
+import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
 import io.github.onlineshop.users.api.dto.UserDto;
+import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.domain.User;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class UserMapper {
+    private final OrderMapper orderMapper;
+
+    public UserMapper(OrderMapper orderMapper) {
+        this.orderMapper = orderMapper;
+    }
+
     public UserDto toUserDto(User user) {
         return new UserDto(
                 user.username(),
                 user.email(),
-                user.registrationDate()
+                user.registrationDate(),
+                user.orders()
         );
     }
 
@@ -27,7 +40,8 @@ public class UserMapper {
                 userDto.username(),
                 userDto.email(),
                 null,
-                userDto.registrationDate()
+                userDto.registrationDate(),
+                userDto.orders()
         );
     }
 
@@ -36,21 +50,36 @@ public class UserMapper {
                 userToCreate.username(),
                 userToCreate.email(),
                 userToCreate.password(),
+                null,
                 null
         );
     }
 
     public User toDomainUser(UserEntity userEntity) {
+        List<OrderDto> orderDtoList = userEntity.getOrders()
+            .stream()
+            .map(orderMapper::toOrderDto)
+            .toList();
+
         return new User(
                 userEntity.getUsername(),
                 userEntity.getEmail(),
                 userEntity.getPasswordHash(),
-                userEntity.getRegistrationDate()
+                userEntity.getRegistrationDate(),
+                orderDtoList
         );
     }
 
     public UserEntity toUserEntity(User user) {
         UserEntity userEntity = new UserEntity();
+        if(user.orders() != null) {
+            List<OrderEntity> orderEntityList = user.orders()
+                    .stream()
+                    .map(orderMapper::toOrderEntity)
+                    .toList();
+
+            userEntity.setOrders(orderEntityList);
+        }
 
         userEntity.setUsername(user.username());
         userEntity.setEmail(user.email());
@@ -67,6 +96,14 @@ public class UserMapper {
 
     public UserCreateResponse toCreateResponse(UserEntity userEntity) {
         return new UserCreateResponse(
+                userEntity.getUsername(),
+                userEntity.getEmail(),
+                userEntity.getRegistrationDate()
+        );
+    }
+
+    public UserModifyResponse toModifyResponse(UserEntity userEntity) {
+        return new UserModifyResponse(
                 userEntity.getUsername(),
                 userEntity.getEmail()
         );

@@ -1,5 +1,6 @@
 package io.github.onlineshop.products.api;
 
+import io.github.onlineshop.constants.PathConstants;
 import io.github.onlineshop.products.api.dto.ProductDto;
 import io.github.onlineshop.products.domain.ProductService;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping(PathConstants.PRODUCT)
 public class ProductController {
     private static final Logger log =
             LoggerFactory.getLogger(ProductController.class);
@@ -77,6 +78,15 @@ public class ProductController {
     ) {
         log.info("Called method deleteProduct: id={}", id);
         productService.deleteProduct(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteProduct(
+            @RequestParam(name = "productName") String productName
+    ) {
+        log.info("Called method deleteProduct: name={}", productName);
+        productService.deleteProductByName(productName);
         return ResponseEntity.ok().build();
     }
 }
