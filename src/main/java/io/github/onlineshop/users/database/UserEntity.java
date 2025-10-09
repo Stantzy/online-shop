@@ -2,6 +2,8 @@ package io.github.onlineshop.users.database;
 
 import io.github.onlineshop.orders.database.OrderEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +29,7 @@ public class UserEntity {
     private LocalDate registrationDate;
 
     @OneToMany(mappedBy = "orderOwner")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OrderEntity> orders;
 
     public UserEntity() {}

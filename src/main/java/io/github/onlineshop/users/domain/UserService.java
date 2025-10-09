@@ -80,14 +80,16 @@ public class UserService {
         return mapper.toCreateResponse(savedEntity);
     }
 
-    public UserModifyResponse updateUser(UserModifyRequest userToModify) {
+    public UserModifyResponse updateUser(
+            Long id,
+            UserModifyRequest userToModify
+    ) {
         log.info("Called method updateUser");
         UserEntity entityToUpdate =
-                        repository.findByUsername(userToModify.username())
-                                .orElseThrow(() -> new EntityNotFoundException(
-                                        "Not found user by name " +
-                                        userToModify.username())
-                                );
+                repository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Not found user by id " + id)
+                        );
 
         entityToUpdate.setUsername(userToModify.username());
         entityToUpdate.setEmail(userToModify.email());

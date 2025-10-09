@@ -4,6 +4,8 @@ import io.github.onlineshop.orders.OrderStatus;
 import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.users.database.UserEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class OrderEntity {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<ProductEntity> products;
 
     public OrderEntity() {}

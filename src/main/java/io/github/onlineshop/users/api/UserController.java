@@ -54,10 +54,11 @@ public class UserController {
 
     @PutMapping("/{id}/update_user")
     public ResponseEntity<UserModifyResponse> updateUser(
+            @PathVariable Long id,
             @RequestBody UserModifyRequest userToModify
     ) {
         log.info("Called method updateUser");
-        return ResponseEntity.ok(userService.updateUser(userToModify));
+        return ResponseEntity.ok(userService.updateUser(id, userToModify));
     }
 
     @PutMapping("/{id}/change_password")
