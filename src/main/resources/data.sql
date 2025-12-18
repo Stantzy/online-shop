@@ -1,15 +1,17 @@
+-- Test Data
 -- Users
-INSERT INTO users (id, username, email, hash, registration_date) VALUES
-    (1, 'alice', 'alice@mail.com', 'hash1', '2025-10-08'),
-    (2, 'bob', 'bob@mail.com', 'hash2', '2025-10-07'),
-    (3, 'charlie', 'charlie@mail.com', 'hash3', '2025-10-06'),
-    (4, 'david', 'david@mail.com', 'hash4', '2025-10-05'),
-    (5, 'eva', 'eva@mail.com', 'hash5', '2025-10-04'),
-    (6, 'frank', 'frank@mail.com', 'hash6', '2025-10-03'),
-    (7, 'grace', 'grace@mail.com', 'hash7', '2025-10-02'),
-    (8, 'henry', 'henry@mail.com', 'hash8', '2025-10-01'),
-    (9, 'isabel', 'isabel@mail.com', 'hash9', '2025-09-30'),
-    (10, 'jack', 'jack@mail.com', 'hash10', '2025-09-29');
+INSERT INTO users (id, username, email, hash, registration_date, role) VALUES
+    (11, 'admin', 'admin@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-01-01', 'ADMIN'),
+    (1, 'alice', 'alice@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-08', 'USER'),
+    (2, 'bob', 'bob@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-07', 'USER'),
+    (3, 'charlie', 'charlie@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-06', 'USER'),
+    (4, 'david', 'david@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-05', 'USER'),
+    (5, 'eva', 'eva@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-04', 'USER'),
+    (6, 'frank', 'frank@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-03', 'USER'),
+    (7, 'grace', 'grace@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-02', 'USER'),
+    (8, 'henry', 'henry@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-01', 'USER'),
+    (9, 'isabel', 'isabel@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-09-30', 'USER'),
+    (10, 'jack', 'jack@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-09-29', 'USER');
 
 -- Products
 INSERT INTO products (id, name, price, quantity) VALUES
