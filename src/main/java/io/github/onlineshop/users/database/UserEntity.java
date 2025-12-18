@@ -1,6 +1,7 @@
 package io.github.onlineshop.users.database;
 
 import io.github.onlineshop.orders.database.OrderEntity;
+import io.github.onlineshop.security.UserRole;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -31,6 +32,10 @@ public class UserEntity {
     @OneToMany(mappedBy = "orderOwner")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OrderEntity> orders;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private UserRole role;
 
     public UserEntity() {}
 
@@ -80,5 +85,13 @@ public class UserEntity {
 
     public void setOrders(List<OrderEntity> orders) {
         this.orders = orders;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

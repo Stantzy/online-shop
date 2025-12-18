@@ -1,10 +1,13 @@
 package io.github.onlineshop.users.api.dto.response;
 
+import io.github.onlineshop.security.UserRole;
+
 import java.time.LocalDate;
 
 public record UserCreateResponse(
     String username,
     String email,
-    LocalDate registrationDate
+    LocalDate registrationDate,
+    UserRole role
 ) {
 }

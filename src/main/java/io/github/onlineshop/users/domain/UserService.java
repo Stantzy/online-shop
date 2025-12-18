@@ -1,5 +1,6 @@
 package io.github.onlineshop.users.domain;
 
+import io.github.onlineshop.security.UserRole;
 import io.github.onlineshop.users.UserMapper;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
@@ -71,13 +72,33 @@ public class UserService {
                 userToCreate.email(),
                 encoder.encode(userToCreate.password()),
                 LocalDate.now(),
-                null
+                null,
+                UserRole.USER
         );
 
         UserEntity entityToSave = mapper.toUserEntity(userToSave);
         UserEntity savedEntity = repository.save(entityToSave);
 
         return mapper.toCreateResponse(savedEntity);
+    }
+
+    public UserModifyResponse updateUserRole(
+            Long id,
+            UserModifyRequest userToModify
+    ) {
+        log.info("Called method updateUserRole");
+
+        UserEntity entityToUpdate =
+                repository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Not found user by id " + id)
+                        );
+
+        entityToUpdate.setRole(userToModify.role());
+
+        UserEntity updatedEntity = repository.save(entityToUpdate);
+
+        return mapper.toModifyResponse(updatedEntity);
     }
 
     public UserModifyResponse updateUser(

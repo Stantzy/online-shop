@@ -3,6 +3,7 @@ package io.github.onlineshop.users;
 import io.github.onlineshop.orders.OrderMapper;
 import io.github.onlineshop.orders.api.dto.OrderDto;
 import io.github.onlineshop.orders.database.OrderEntity;
+import io.github.onlineshop.security.UserRole;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
 import io.github.onlineshop.users.api.dto.UserDto;
@@ -26,7 +27,8 @@ public class UserMapper {
                 user.username(),
                 user.email(),
                 user.registrationDate(),
-                user.orders()
+                user.orders(),
+                user.role()
         );
     }
 
@@ -41,7 +43,8 @@ public class UserMapper {
                 userDto.email(),
                 null,
                 userDto.registrationDate(),
-                userDto.orders()
+                userDto.orders(),
+                userDto.role()
         );
     }
 
@@ -51,7 +54,8 @@ public class UserMapper {
                 userToCreate.email(),
                 userToCreate.password(),
                 null,
-                null
+                null,
+                UserRole.USER
         );
     }
 
@@ -66,7 +70,8 @@ public class UserMapper {
                 userEntity.getEmail(),
                 userEntity.getPasswordHash(),
                 userEntity.getRegistrationDate(),
-                orderDtoList
+                orderDtoList,
+                userEntity.getRole()
         );
     }
 
@@ -85,6 +90,7 @@ public class UserMapper {
         userEntity.setEmail(user.email());
         userEntity.setPasswordHash(user.passwordHash());
         userEntity.setRegistrationDate(user.registrationDate());
+        userEntity.setRole(user.role());
 
         return userEntity;
     }
@@ -98,14 +104,16 @@ public class UserMapper {
         return new UserCreateResponse(
                 userEntity.getUsername(),
                 userEntity.getEmail(),
-                userEntity.getRegistrationDate()
+                userEntity.getRegistrationDate(),
+                userEntity.getRole()
         );
     }
 
     public UserModifyResponse toModifyResponse(UserEntity userEntity) {
         return new UserModifyResponse(
                 userEntity.getUsername(),
-                userEntity.getEmail()
+                userEntity.getEmail(),
+                userEntity.getRole()
         );
     }
 }
