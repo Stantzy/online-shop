@@ -20,7 +20,8 @@ import java.util.List;
 @RequestMapping(PathConstants.USER)
 public class UserController {
     private static final Logger log =
-            LoggerFactory.getLogger(UserController.class);
+        LoggerFactory.getLogger(UserController.class);
+
     private final UserService userService;
 
     public UserController(
@@ -37,7 +38,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(
-            @PathVariable Long id
+        @PathVariable Long id
     ) {
         log.info("Called method getUserById");;
         return ResponseEntity.ok(userService.getUserById(id));
@@ -45,17 +46,17 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserCreateResponse> createUser(
-            @RequestBody UserCreateRequest userToCreate
+        @RequestBody UserCreateRequest userToCreate
     ) {
         log.info("Called method createUser");
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.createUser(userToCreate));
+            .body(userService.createUser(userToCreate));
     }
 
     @PutMapping("/{id}/update_user")
     public ResponseEntity<UserModifyResponse> updateUser(
-            @PathVariable Long id,
-            @RequestBody UserModifyRequest userToModify
+        @PathVariable Long id,
+        @RequestBody UserModifyRequest userToModify
     ) {
         log.info("Called method updateUser");
         return ResponseEntity.ok(userService.updateUser(id, userToModify));
@@ -63,18 +64,18 @@ public class UserController {
 
     @PutMapping("/{id}/change_password")
     public ResponseEntity<Boolean> changePassword(
-            @PathVariable Long id,
-            @RequestBody UserPasswordChangeRequest passwordChangeRequest
+        @PathVariable Long id,
+        @RequestBody UserPasswordChangeRequest passwordChangeRequest
     ) {
         log.info("Called method changePassword: id={}", id);
         return ResponseEntity.ok(
-                userService.changePassword(id, passwordChangeRequest)
+            userService.changePassword(id, passwordChangeRequest)
         );
     }
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> deleteUserById(
-            @PathVariable Long id
+        @PathVariable Long id
     ) {
         log.info("Called method deleteUserById: id={}", id);
         userService.deleteUserById(id);

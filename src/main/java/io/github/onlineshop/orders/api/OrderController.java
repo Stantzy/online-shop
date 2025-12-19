@@ -14,11 +14,12 @@ import java.util.List;
 @RequestMapping(PathConstants.ORDER)
 public class OrderController {
     private static final Logger log =
-            LoggerFactory.getLogger(OrderController.class);
+        LoggerFactory.getLogger(OrderController.class);
+
     private final OrderService orderService;
 
     public OrderController(
-            OrderService orderService
+        OrderService orderService
     ) {
         this.orderService = orderService;
     }
@@ -32,7 +33,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderDto> getOrderById(
-            @PathVariable Long id
+        @PathVariable Long id
     ) {
         log.info("Called method getOrderById: id={}", id);
 
@@ -41,7 +42,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(
-            @RequestBody OrderDto orderToCreate
+        @RequestBody OrderDto orderToCreate
     ) {
         log.info("Called method createOrder");
         return ResponseEntity.ok(orderService.createOrder(orderToCreate));
@@ -49,7 +50,7 @@ public class OrderController {
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> deleteOrderById(
-            @PathVariable Long id
+        @PathVariable Long id
     ) {
         log.info("Called deleteOrderById: id={}", id);
         orderService.deleteOrderById(id);

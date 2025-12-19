@@ -3,38 +3,28 @@ package io.github.onlineshop.config;
 import io.github.onlineshop.constants.PathConstants;
 import io.github.onlineshop.security.UserDetailsServiceImpl;
 import io.github.onlineshop.security.jwt.JwtFilter;
-import io.github.onlineshop.users.UserMapper;
 import io.github.onlineshop.users.database.UserRepository;
-import io.github.onlineshop.users.domain.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-import org.springframework.web.servlet.DispatcherServlet;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final static Logger log =
-            LoggerFactory.getLogger(SecurityConfig.class);
+        LoggerFactory.getLogger(SecurityConfig.class);
 
     private final JwtFilter jwtFilter;
 
@@ -49,13 +39,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsServiceImpl userDetailServiceImpl(UserRepository userRepository) {
+    public UserDetailsService userDetailService(UserRepository userRepository) {
         log.info("Creating UserDetailsService bean");
         return new UserDetailsServiceImpl(userRepository);
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+    throws Exception {
         log.info("Creating SecurityFilterChain bean");
         http
             .csrf(AbstractHttpConfigurer::disable)
@@ -67,16 +58,19 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(
+                jwtFilter,
+                UsernamePasswordAuthenticationFilter.class
+            );
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authConfig
+        AuthenticationConfiguration authConfig
     ) throws Exception {
         log.info("Creating AuthenticationManager bean");
         return authConfig.getAuthenticationManager();

@@ -9,35 +9,35 @@ import org.springframework.stereotype.Component;
 public class ProductMapper {
     public ProductDto toProductDto(Product product) {
         return new ProductDto(
-                product.name(),
-                product.quantity(),
-                product.price()
+            product.name(),
+            product.quantity(),
+            product.price()
         );
     }
 
     public ProductDto toProductDto(ProductEntity productEntity) {
         return new ProductDto(
-                productEntity.getName(),
-                productEntity.getQuantity(),
-                productEntity.getPrice()
+            productEntity.getName(),
+            productEntity.getQuantity(),
+            productEntity.getPrice()
         );
     }
 
     public Product toDomainProduct(ProductDto productDto) {
         return new Product(
-                null,
-                productDto.name(),
-                productDto.quantity(),
-                productDto.price()
+            null,
+            productDto.name(),
+            productDto.quantity(),
+            productDto.price()
         );
     }
 
     public Product toDomainProduct(ProductEntity productEntity) {
         return new Product(
-                productEntity.getId(),
-                productEntity.getName(),
-                productEntity.getQuantity(),
-                productEntity.getPrice()
+            productEntity.getId(),
+            productEntity.getName(),
+            productEntity.getQuantity(),
+            productEntity.getPrice()
         );
     }
 

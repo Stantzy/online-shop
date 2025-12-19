@@ -10,4 +10,5 @@ public record UserCreateResponse(
     LocalDate registrationDate,
     UserRole role
 ) {
+
 }

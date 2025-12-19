@@ -3,7 +3,7 @@ package io.github.onlineshop.orders.domain;
 import io.github.onlineshop.orders.OrderMapper;
 import io.github.onlineshop.orders.api.dto.OrderDto;
 import io.github.onlineshop.orders.database.OrderEntity;
-import io.github.onlineshop.orders.database.OrderRepostitory;
+import io.github.onlineshop.orders.database.OrderRepository;
 import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.products.database.ProductRepository;
 import io.github.onlineshop.users.database.UserEntity;
@@ -18,19 +18,20 @@ import java.util.List;
 @Service
 public class OrderService {
     private static final Logger log =
-            LoggerFactory.getLogger(OrderService.class);
+        LoggerFactory.getLogger(OrderService.class);
+
     private final OrderMapper mapper;
-    private final OrderRepostitory orderRepostitory;
+    private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
     public OrderService(
-            OrderRepostitory orderRepostitory,
-            UserRepository userRepository,
-            ProductRepository productRepository,
-            OrderMapper mapper
+        OrderRepository orderRepository,
+        UserRepository userRepository,
+        ProductRepository productRepository,
+        OrderMapper mapper
     ) {
-        this.orderRepostitory = orderRepostitory;
+        this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.mapper = mapper;
@@ -39,19 +40,20 @@ public class OrderService {
     public List<OrderDto> getAllOrders() {
         log.info("Called method getAllOrders");
 
-        List<OrderEntity> orderEntities = orderRepostitory.findAll();
+        List<OrderEntity> orderEntities = orderRepository.findAll();
+
         return orderEntities.stream()
-                .map(mapper::toOrderDto)
-                .toList();
+            .map(mapper::toOrderDto)
+            .toList();
     }
 
     public OrderDto getOrderById(Long id) {
         log.info("Called method getOrderById: id={}", id);
 
-        OrderEntity orderEntity = orderRepostitory.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Not found order by id = " + id)
-                );
+        OrderEntity orderEntity = orderRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Not found order by id = " + id)
+            );
 
         return mapper.toOrderDto(orderEntity);
     }
@@ -66,20 +68,22 @@ public class OrderService {
 
         Long userId = orderEntityToSave.getUserId();
         UserEntity orderOwner = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Not found user by id = " + userId)
-                );
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Not found user by id = " + userId)
+            );
+
         orderEntityToSave.setOrderOwner(orderOwner);
 
         List<ProductEntity> orderItems =
-                productRepository.findAllById(orderToCreate.productIds());
+            productRepository.findAllById(orderToCreate.productIds());
+
         orderEntityToSave.setProducts(orderItems);
 
-        return mapper.toOrderDto(orderRepostitory.save(orderEntityToSave));
+        return mapper.toOrderDto(orderRepository.save(orderEntityToSave));
     }
 
     public void deleteOrderById(Long id) {
         log.info("Called method deleteOrderById: id={}", id);
-        orderRepostitory.deleteById(id);
+        orderRepository.deleteById(id);
     }
 }

@@ -22,15 +22,15 @@ import java.util.List;
 @Service
 public class UserService {
     private static final Logger log =
-            LoggerFactory.getLogger(UserService.class);
+        LoggerFactory.getLogger(UserService.class);
     private final UserRepository repository;
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
 
     public UserService(
-            UserRepository repository,
-            UserMapper mapper,
-            PasswordEncoder encoder
+        UserRepository repository,
+        UserMapper mapper,
+        PasswordEncoder encoder
     ) {
         this.repository = repository;
         this.mapper = mapper;
@@ -42,38 +42,38 @@ public class UserService {
 
         List<UserEntity> allEntities = repository.findAll();
         List<User> allUsers = allEntities.stream()
-                .map(mapper::toDomainUser)
-                .toList();
+            .map(mapper::toDomainUser)
+            .toList();
 
         return allUsers.stream()
-                .map(mapper::toUserDto)
-                .toList();
+            .map(mapper::toUserDto)
+            .toList();
     }
 
     public UserDto getUserById(Long id) {
         log.info("Called method getUserById: id={}", id);
 
         UserEntity userEntity =
-                repository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "Not found user by id=" + id)
-                    );
+            repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Not found user by id=" + id)
+                );
 
         return mapper.toUserDto(userEntity);
     }
 
     public UserCreateResponse createUser(
-            UserCreateRequest userToCreate
+                UserCreateRequest userToCreate
     ) {
         log.info("Called method createUser");
 
         User userToSave = new User(
-                userToCreate.username(),
-                userToCreate.email(),
-                encoder.encode(userToCreate.password()),
-                LocalDate.now(),
-                null,
-                UserRole.USER
+            userToCreate.username(),
+            userToCreate.email(),
+            encoder.encode(userToCreate.password()),
+            LocalDate.now(),
+            null,
+            UserRole.USER
         );
 
         UserEntity entityToSave = mapper.toUserEntity(userToSave);
@@ -83,16 +83,16 @@ public class UserService {
     }
 
     public UserModifyResponse updateUserRole(
-            Long id,
-            UserModifyRequest userToModify
+        Long id,
+        UserModifyRequest userToModify
     ) {
         log.info("Called method updateUserRole");
 
         UserEntity entityToUpdate =
-                repository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException(
-                                "Not found user by id " + id)
-                        );
+            repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Not found user by id " + id)
+                );
 
         entityToUpdate.setRole(userToModify.role());
 
@@ -102,15 +102,15 @@ public class UserService {
     }
 
     public UserModifyResponse updateUser(
-            Long id,
-            UserModifyRequest userToModify
+        Long id,
+        UserModifyRequest userToModify
     ) {
         log.info("Called method updateUser");
         UserEntity entityToUpdate =
-                repository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException(
-                                "Not found user by id " + id)
-                        );
+            repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Not found user by id " + id)
+                );
 
         entityToUpdate.setUsername(userToModify.username());
         entityToUpdate.setEmail(userToModify.email());
@@ -121,27 +121,28 @@ public class UserService {
     }
 
     public Boolean changePassword(
-            Long id,
-            UserPasswordChangeRequest passwordChangeRequest
+        Long id,
+        UserPasswordChangeRequest passwordChangeRequest
     ) {
         log.info("Called method changePassword: id={}", id);
 
         UserEntity userEntity =
-                repository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException(
-                                "Not found user by id=" + id)
-                        );
+            repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Not found user by id=" + id)
+                );
 
         boolean isMatch = encoder.matches(
-                passwordChangeRequest.oldPassword(), userEntity.getPasswordHash()
+            passwordChangeRequest.oldPassword(), userEntity.getPasswordHash()
         );
         if(!isMatch) {
             throw new IllegalArgumentException("Old password is wrong");
         }
         userEntity.setPasswordHash(
-                encoder.encode(passwordChangeRequest.newPassword())
+            encoder.encode(passwordChangeRequest.newPassword())
         );
         repository.save(userEntity);
+
         return true;
     }
 

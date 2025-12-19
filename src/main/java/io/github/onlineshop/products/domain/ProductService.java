@@ -16,13 +16,14 @@ import java.util.List;
 @Service
 public class ProductService {
     private static final Logger log =
-            LoggerFactory.getLogger(ProductService.class);
+        LoggerFactory.getLogger(ProductService.class);
+
     private final ProductRepository repository;
     private final ProductMapper mapper;
 
     public ProductService(
-            ProductRepository repository,
-            ProductMapper mapper
+        ProductRepository repository,
+        ProductMapper mapper
     ) {
         this.repository = repository;
         this.mapper = mapper;
@@ -34,17 +35,17 @@ public class ProductService {
         List<ProductEntity> productEntities = repository.findAll();
 
         return productEntities.stream()
-                .map(mapper::toProductDto)
-                .toList();
+            .map(mapper::toProductDto)
+            .toList();
     }
 
     public ProductDto getProductById(Long id) {
         log.info("Called getProductById: id={}", id);
 
         ProductEntity productEntity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Not found product by id = " + id)
-                );
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Not found product by id = " + id)
+            );
 
         return mapper.toProductDto(productEntity);
     }
@@ -53,7 +54,7 @@ public class ProductService {
         log.info("Called method createProduct");
 
         ProductEntity productEntityToSave =
-                mapper.toProductEntity(productToCreate);
+            mapper.toProductEntity(productToCreate);
 
         return mapper.toProductDto(repository.save(productEntityToSave));
     }
@@ -62,9 +63,9 @@ public class ProductService {
         log.info("Called method updateProduct: id={}", id);
 
         ProductEntity entityToUpdate = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Not found product by id = " + id)
-                );
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Not found product by id = " + id)
+            );
 
         if(productToUpdate.price().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Price can't be negative");
@@ -86,9 +87,9 @@ public class ProductService {
         log.info("Called method updateProductPrice: id={}", id);
 
         ProductEntity entityToUpdate = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Not found product by id = " + id)
-                );
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Not found product by id = " + id)
+            );
 
         if(newPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Price can't be negative");

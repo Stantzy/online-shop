@@ -11,14 +11,14 @@ import java.util.List;
 public class OrderMapper {
     public OrderDto toOrderDto(OrderEntity orderEntity) {
         List<Long> productIds = orderEntity.getProducts()
-                .stream()
-                .map(ProductEntity::getId)
-                .toList();
+            .stream()
+            .map(ProductEntity::getId)
+            .toList();
 
         return new OrderDto(
-                orderEntity.getOrderOwner().getId(),
-                productIds,
-                orderEntity.getOrderStatus()
+            orderEntity.getOrderOwner().getId(),
+            productIds,
+            orderEntity.getOrderStatus()
         );
     }
 

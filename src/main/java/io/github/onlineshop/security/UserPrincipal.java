@@ -1,11 +1,8 @@
 package io.github.onlineshop.security;
 
-import io.github.onlineshop.users.domain.User;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,11 +15,11 @@ public class UserPrincipal implements UserDetails {
     private final UserRole role;
 
     public UserPrincipal(
-            Long id,
-            String username,
-            String email,
-            String hash,
-            UserRole role
+        Long id,
+        String username,
+        String email,
+        String hash,
+        UserRole role
     ) {
         this.id = id;
         this.username = username;
@@ -31,19 +28,15 @@ public class UserPrincipal implements UserDetails {
         this.role = role;
     }
 
-//      TO DO
-//    public UserPrincipal create(User user) {
-//        SecurityProperties
-//    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == UserRole.ADMIN) {
             return List.of(
-                    new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER")
+                new SimpleGrantedAuthority("ROLE_ADMIN"),
+                new SimpleGrantedAuthority("ROLE_USER")
             );
         }
+
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

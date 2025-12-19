@@ -7,4 +7,5 @@ public record UserModifyResponse(
     String email,
     UserRole role
 ) {
+
 }

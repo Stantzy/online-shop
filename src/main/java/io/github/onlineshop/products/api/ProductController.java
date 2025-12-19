@@ -5,7 +5,6 @@ import io.github.onlineshop.products.api.dto.ProductDto;
 import io.github.onlineshop.products.domain.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +15,12 @@ import java.util.List;
 @RequestMapping(PathConstants.PRODUCT)
 public class ProductController {
     private static final Logger log =
-            LoggerFactory.getLogger(ProductController.class);
+        LoggerFactory.getLogger(ProductController.class);
+
     private final ProductService productService;
 
     public ProductController(
-            ProductService productService
+        ProductService productService
     ) {
         this.productService = productService;
     }
@@ -33,7 +33,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(
-            @PathVariable Long id
+        @PathVariable Long id
     ) {
         log.info("Called getProductById: id={}", id);
 
@@ -42,7 +42,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductDto> createProduct(
-            @RequestBody ProductDto productToCreate
+        @RequestBody ProductDto productToCreate
     ) {
         log.info("Called method createProduct");
         return ResponseEntity.ok(productService.createProduct(productToCreate));
@@ -50,31 +50,31 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDto> updateProduct(
-            @PathVariable Long id,
-            @RequestBody ProductDto productToUpdate
+        @PathVariable Long id,
+        @RequestBody ProductDto productToUpdate
     ) {
         log.info("Called method updateProduct: id={}", id);
 
         ProductDto updatedProduct =
-                productService.updateProduct(id, productToUpdate);
+            productService.updateProduct(id, productToUpdate);
 
         return ResponseEntity.ok(updatedProduct);
     }
 
     @PutMapping("/{id}/update_price")
     public ResponseEntity<ProductDto> updateProductPrice(
-            @PathVariable Long id,
-            @RequestParam(name = "newPrice") BigDecimal newPrice
+        @PathVariable Long id,
+        @RequestParam(name = "newPrice") BigDecimal newPrice
     ) {
         log.info("Called updateProductPrice: id={}, newPrice={}", id, newPrice);
 
         return ResponseEntity
-                .ok(productService.updateProductPrice(id, newPrice));
+            .ok(productService.updateProductPrice(id, newPrice));
     }
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> deleteProduct(
-            @PathVariable Long id
+        @PathVariable Long id
     ) {
         log.info("Called method deleteProduct: id={}", id);
         productService.deleteProduct(id);
@@ -83,7 +83,7 @@ public class ProductController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteProduct(
-            @RequestParam(name = "productName") String productName
+        @RequestParam(name = "productName") String productName
     ) {
         log.info("Called method deleteProduct: name={}", productName);
         productService.deleteProductByName(productName);

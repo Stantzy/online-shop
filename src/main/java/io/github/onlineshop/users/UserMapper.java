@@ -24,11 +24,11 @@ public class UserMapper {
 
     public UserDto toUserDto(User user) {
         return new UserDto(
-                user.username(),
-                user.email(),
-                user.registrationDate(),
-                user.orders(),
-                user.role()
+            user.username(),
+            user.email(),
+            user.registrationDate(),
+            user.orders(),
+            user.role()
         );
     }
 
@@ -39,23 +39,23 @@ public class UserMapper {
 
     public User toDomainUser(UserDto userDto) {
         return new User(
-                userDto.username(),
-                userDto.email(),
-                null,
-                userDto.registrationDate(),
-                userDto.orders(),
-                userDto.role()
+            userDto.username(),
+            userDto.email(),
+            null,
+            userDto.registrationDate(),
+            userDto.orders(),
+            userDto.role()
         );
     }
 
     public User toDomainUser(UserCreateRequest userToCreate) {
         return new User(
-                userToCreate.username(),
-                userToCreate.email(),
-                userToCreate.password(),
-                null,
-                null,
-                UserRole.USER
+            userToCreate.username(),
+            userToCreate.email(),
+            userToCreate.password(),
+            null,
+            null,
+            UserRole.USER
         );
     }
 
@@ -66,12 +66,12 @@ public class UserMapper {
             .toList();
 
         return new User(
-                userEntity.getUsername(),
-                userEntity.getEmail(),
-                userEntity.getPasswordHash(),
-                userEntity.getRegistrationDate(),
-                orderDtoList,
-                userEntity.getRole()
+            userEntity.getUsername(),
+            userEntity.getEmail(),
+            userEntity.getPasswordHash(),
+            userEntity.getRegistrationDate(),
+            orderDtoList,
+            userEntity.getRole()
         );
     }
 
@@ -79,9 +79,9 @@ public class UserMapper {
         UserEntity userEntity = new UserEntity();
         if(user.orders() != null) {
             List<OrderEntity> orderEntityList = user.orders()
-                    .stream()
-                    .map(orderMapper::toOrderEntity)
-                    .toList();
+                .stream()
+                .map(orderMapper::toOrderEntity)
+                .toList();
 
             userEntity.setOrders(orderEntityList);
         }
@@ -102,18 +102,18 @@ public class UserMapper {
 
     public UserCreateResponse toCreateResponse(UserEntity userEntity) {
         return new UserCreateResponse(
-                userEntity.getUsername(),
-                userEntity.getEmail(),
-                userEntity.getRegistrationDate(),
-                userEntity.getRole()
+            userEntity.getUsername(),
+            userEntity.getEmail(),
+            userEntity.getRegistrationDate(),
+            userEntity.getRole()
         );
     }
 
     public UserModifyResponse toModifyResponse(UserEntity userEntity) {
         return new UserModifyResponse(
-                userEntity.getUsername(),
-                userEntity.getEmail(),
-                userEntity.getRole()
+            userEntity.getUsername(),
+            userEntity.getEmail(),
+            userEntity.getRole()
         );
     }
 }

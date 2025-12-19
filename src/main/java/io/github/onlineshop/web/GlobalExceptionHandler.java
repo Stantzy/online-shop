@@ -15,75 +15,75 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger log =
-            LoggerFactory.getLogger(GlobalExceptionHandler.class);
+        LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGenericException(Exception e) {
         log.error("Handle exception: ", e);
 
         ErrorResponseDto errorDto = new ErrorResponseDto(
-                "Internal server error",
-                e.getMessage(),
-                LocalDateTime.now()
+            "Internal server error",
+            e.getMessage(),
+            LocalDateTime.now()
         );
 
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(errorDto);
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(errorDto);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleEntityNotFoundException(
-            EntityNotFoundException e
+        EntityNotFoundException e
     ) {
         log.error("Handle entity not found: ", e);
 
         ErrorResponseDto errorDto = new ErrorResponseDto(
-                "Entity not found",
-                e.getMessage(),
-                LocalDateTime.now()
+            "Entity not found",
+            e.getMessage(),
+            LocalDateTime.now()
         );
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(errorDto);
+            .status(HttpStatus.NOT_FOUND)
+            .body(errorDto);
     }
 
     @ExceptionHandler(exception = {
-            IllegalArgumentException.class,
-            IllegalStateException.class,
-            MethodArgumentNotValidException.class
+        IllegalArgumentException.class,
+        IllegalStateException.class,
+        MethodArgumentNotValidException.class
     })
     public ResponseEntity<ErrorResponseDto> handleBadRequest(Exception e) {
         log.error("Handle bad request: ", e);
 
         ErrorResponseDto errorDto = new ErrorResponseDto(
-                "Bad request",
-                e.getMessage(),
-                LocalDateTime.now()
+            "Bad request",
+            e.getMessage(),
+            LocalDateTime.now()
         );
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(errorDto);
+            .status(HttpStatus.BAD_REQUEST)
+            .body(errorDto);
     }
 
     @ExceptionHandler(exception =  {
-            BadCredentialsException.class
+        BadCredentialsException.class
     })
     public ResponseEntity<ErrorResponseDto> handleBadCredentials(
-            BadCredentialsException e
+        BadCredentialsException e
     ) {
         log.error("Handle bad credentials: ", e);
 
         ErrorResponseDto errorDto = new ErrorResponseDto(
-                "Bad credentials",
-                e.getMessage(),
-                LocalDateTime.now()
+            "Bad credentials",
+            e.getMessage(),
+            LocalDateTime.now()
         );
 
         return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(errorDto);
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(errorDto);
     }
 }

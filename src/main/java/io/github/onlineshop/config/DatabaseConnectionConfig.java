@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 @EnableConfigurationProperties(DatabaseConfig.class)
 public class DatabaseConnectionConfig {
     private static final Logger log =
-            LoggerFactory.getLogger(DatabaseConnectionConfig.class);
+        LoggerFactory.getLogger(DatabaseConnectionConfig.class);
     private final DatabaseConfig databaseConfig;
 
     public DatabaseConnectionConfig(DatabaseConfig databaseConfig) {

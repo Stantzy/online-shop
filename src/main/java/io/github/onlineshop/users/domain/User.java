@@ -7,11 +7,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record User(
-        String username,
-        String email,
-        String passwordHash,
-        LocalDate registrationDate,
-        List<OrderDto> orders,
-        UserRole role
+    String username,
+    String email,
+    String passwordHash,
+    LocalDate registrationDate,
+    List<OrderDto> orders,
+    UserRole role
 ) {
 }

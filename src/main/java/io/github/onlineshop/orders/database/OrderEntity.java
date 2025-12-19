@@ -29,9 +29,9 @@ public class OrderEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "order_items",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
+        name = "order_items",
+        joinColumns = @JoinColumn(name = "order_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<ProductEntity> products;
