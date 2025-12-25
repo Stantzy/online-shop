@@ -5,7 +5,7 @@ import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
 import io.github.onlineshop.users.api.dto.request.UserPasswordChangeRequest;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
-import io.github.onlineshop.users.api.dto.UserDto;
+import io.github.onlineshop.users.api.dto.response.UserDto;
 import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.domain.UserService;
 import org.slf4j.Logger;

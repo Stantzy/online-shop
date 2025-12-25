@@ -1,9 +1,7 @@
 package io.github.onlineshop.users;
 
-import io.github.onlineshop.orders.OrderMapper;
-import io.github.onlineshop.orders.api.dto.OrderDto;
 import io.github.onlineshop.security.UserRole;
-import io.github.onlineshop.users.api.dto.UserDto;
+import io.github.onlineshop.users.api.dto.response.UserDto;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.database.UserRepository;
 import io.github.onlineshop.users.domain.UserService;
@@ -54,6 +52,7 @@ class UserServiceTest {
                 .thenReturn(Optional.of(userEntity));
 
         UserDto mappedUserDto = new UserDto(
+                userEntity.getId(),
                 userEntity.getUsername(),
                 userEntity.getEmail(),
                 userEntity.getRegistrationDate(),

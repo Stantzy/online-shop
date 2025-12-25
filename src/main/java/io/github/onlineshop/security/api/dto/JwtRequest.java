@@ -1,4 +1,4 @@
-package io.github.onlineshop.security.dto;
+package io.github.onlineshop.security.api.dto;
 
 public record JwtRequest(
     String username,

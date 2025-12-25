@@ -6,7 +6,7 @@ import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
 import io.github.onlineshop.users.api.dto.request.UserPasswordChangeRequest;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
-import io.github.onlineshop.users.api.dto.UserDto;
+import io.github.onlineshop.users.api.dto.response.UserDto;
 import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.database.UserRepository;
@@ -62,12 +62,15 @@ public class UserService {
         return mapper.toUserDto(userEntity);
     }
 
+    // FIXME What if user already exists?
+    // FIXME What if username or email is exists?
     public UserCreateResponse createUser(
                 UserCreateRequest userToCreate
     ) {
         log.info("Called method createUser");
 
         User userToSave = new User(
+            null,
             userToCreate.username(),
             userToCreate.email(),
             encoder.encode(userToCreate.password()),

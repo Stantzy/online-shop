@@ -6,7 +6,7 @@ import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.security.UserRole;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
-import io.github.onlineshop.users.api.dto.UserDto;
+import io.github.onlineshop.users.api.dto.response.UserDto;
 import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.domain.User;
@@ -24,6 +24,7 @@ public class UserMapper {
 
     public UserDto toUserDto(User user) {
         return new UserDto(
+            user.id(),
             user.username(),
             user.email(),
             user.registrationDate(),
@@ -39,6 +40,7 @@ public class UserMapper {
 
     public User toDomainUser(UserDto userDto) {
         return new User(
+            userDto.id(),
             userDto.username(),
             userDto.email(),
             null,
@@ -50,6 +52,7 @@ public class UserMapper {
 
     public User toDomainUser(UserCreateRequest userToCreate) {
         return new User(
+            null,
             userToCreate.username(),
             userToCreate.email(),
             userToCreate.password(),
@@ -66,6 +69,7 @@ public class UserMapper {
             .toList();
 
         return new User(
+            userEntity.getId(),
             userEntity.getUsername(),
             userEntity.getEmail(),
             userEntity.getPasswordHash(),
@@ -102,6 +106,7 @@ public class UserMapper {
 
     public UserCreateResponse toCreateResponse(UserEntity userEntity) {
         return new UserCreateResponse(
+            userEntity.getId(),
             userEntity.getUsername(),
             userEntity.getEmail(),
             userEntity.getRegistrationDate(),

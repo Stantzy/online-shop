@@ -1,17 +1,17 @@
 -- Test Data
 -- Users
-INSERT INTO users (id, username, email, hash, registration_date, role) VALUES
-    (11, 'admin', 'admin@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-01-01', 'ADMIN'),
-    (1, 'alice', 'alice@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-08', 'USER'),
-    (2, 'bob', 'bob@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-07', 'USER'),
-    (3, 'charlie', 'charlie@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-06', 'USER'),
-    (4, 'david', 'david@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-05', 'USER'),
-    (5, 'eva', 'eva@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-04', 'USER'),
-    (6, 'frank', 'frank@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-03', 'USER'),
-    (7, 'grace', 'grace@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-02', 'USER'),
-    (8, 'henry', 'henry@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-01', 'USER'),
-    (9, 'isabel', 'isabel@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-09-30', 'USER'),
-    (10, 'jack', 'jack@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-09-29', 'USER');
+INSERT INTO users (username, email, hash, registration_date, role) VALUES
+    ('admin', 'admin@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-01-01', 'ADMIN'),
+    ('alice', 'alice@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-08', 'USER'),
+    ('bob', 'bob@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-07', 'USER'),
+    ('charlie', 'charlie@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-06', 'USER'),
+    ('david', 'david@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-05', 'USER'),
+    ('eva', 'eva@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-04', 'USER'),
+    ('frank', 'frank@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-03', 'USER'),
+    ('grace', 'grace@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-02', 'USER'),
+    ('henry', 'henry@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-10-01', 'USER'),
+    ('isabel', 'isabel@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-09-30', 'USER'),
+    ('jack', 'jack@mail.com', '$2a$10$9wgrQL3pS.CoSPQXTO4kj.ZkO2.gRBTjlzT73pXSOiVC7URycRoTy', '2025-09-29', 'USER');
 
 -- Products
 INSERT INTO products (id, name, price, quantity) VALUES

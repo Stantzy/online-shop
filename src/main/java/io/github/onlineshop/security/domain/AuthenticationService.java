@@ -1,43 +1,37 @@
-package io.github.onlineshop.security;
+package io.github.onlineshop.security.domain;
 
-import io.github.onlineshop.constants.PathConstants;
-import io.github.onlineshop.security.dto.JwtRequest;
-import io.github.onlineshop.security.dto.JwtResponse;
+import io.github.onlineshop.security.UserPrincipal;
+import io.github.onlineshop.security.api.dto.JwtRequest;
+import io.github.onlineshop.security.api.dto.JwtResponse;
 import io.github.onlineshop.security.jwt.JwtTokenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
-@RestController
-@RequestMapping(PathConstants.AUTH)
-public class AuthenticationController {
+@Service
+public class AuthenticationService {
     private static final Logger log =
-        LoggerFactory.getLogger(AuthenticationController.class);
+        LoggerFactory.getLogger(AuthenticationService.class);
 
+    private final AuthenticationManager authenticationManager;
     private final UserDetailsService userService;
     private final JwtTokenUtils jwtTokenUtils;
-    private final AuthenticationManager authenticationManager;
 
-    public AuthenticationController(
+    public AuthenticationService(
+        AuthenticationManager authenticationManager,
         UserDetailsService userService,
-        JwtTokenUtils jwtTokenUtils,
-        AuthenticationManager authenticationManager
+        JwtTokenUtils jwtTokenUtils
     ) {
+        this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenUtils = jwtTokenUtils;
-        this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping
-    public ResponseEntity<?> createAuthToken(
-        @RequestBody JwtRequest authRequest
-    ) {
-        log.info("Called method createAuthToken");
+    public JwtResponse generateToken(JwtRequest authRequest) {
         try {
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -52,6 +46,6 @@ public class AuthenticationController {
             (UserPrincipal) userService.loadUserByUsername(authRequest.username());
         String token = jwtTokenUtils.generateToken(user);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        return new JwtResponse(token);
     }
 }
