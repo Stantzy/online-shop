@@ -2,12 +2,15 @@ package io.github.onlineshop.products.domain;
 
 import io.github.onlineshop.products.ProductMapper;
 import io.github.onlineshop.products.api.dto.ProductDto;
+import io.github.onlineshop.products.api.dto.ProductPaginationRequest;
 import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.products.database.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,6 +36,20 @@ public class ProductService {
         log.info("Called method getAllProducts");
 
         List<ProductEntity> productEntities = repository.findAll();
+
+        return productEntities.stream()
+            .map(mapper::toProductDto)
+            .toList();
+    }
+
+    public List<ProductDto> getAllProductsWithPaginationAndSorting(
+        ProductPaginationRequest paginationRequest
+    ) {
+        log.info("Called method getAllProductsWithPaginationAndSorting");
+
+        List<ProductEntity> productEntities = repository
+            .findAll(paginationRequest.toPageable())
+            .toList();
 
         return productEntities.stream()
             .map(mapper::toProductDto)
