@@ -3,21 +3,25 @@ package io.github.onlineshop.users.api;
 import io.github.onlineshop.constants.PathConstants;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
+import io.github.onlineshop.users.api.dto.request.UserPaginationRequest;
 import io.github.onlineshop.users.api.dto.request.UserPasswordChangeRequest;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
 import io.github.onlineshop.users.api.dto.response.UserDto;
 import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.domain.UserService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(PathConstants.USER)
+@Validated
 public class UserController {
     private static final Logger log =
         LoggerFactory.getLogger(UserController.class);
@@ -31,9 +35,21 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        log.info("Called method getAllUsers");
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserDto>> getAllUsers(
+        @Valid UserPaginationRequest pagination
+    ) {
+        log.info(
+            "Called method getAllUsers: sortBy={}, sortDirection={} " +
+            "pageNumber={}, pageSize={}",
+            pagination.sortBy(),
+            pagination.sortDirection(),
+            pagination.pageNumber(),
+            pagination.pageSize()
+        );
+        
+        return ResponseEntity.ok(
+            userService.getAllUsers(pagination)
+        );
     }
 
     @GetMapping("/{id}")

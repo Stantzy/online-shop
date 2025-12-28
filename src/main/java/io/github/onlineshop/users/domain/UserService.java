@@ -4,6 +4,7 @@ import io.github.onlineshop.security.UserRole;
 import io.github.onlineshop.users.UserMapper;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
+import io.github.onlineshop.users.api.dto.request.UserPaginationRequest;
 import io.github.onlineshop.users.api.dto.request.UserPasswordChangeRequest;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
 import io.github.onlineshop.users.api.dto.response.UserDto;
@@ -37,15 +38,15 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAllUsers(
+        UserPaginationRequest pagination
+    ) {
         log.info("Called getAllUsers");
 
-        List<UserEntity> allEntities = repository.findAll();
-        List<User> allUsers = allEntities.stream()
-            .map(mapper::toDomainUser)
-            .toList();
+        List<UserEntity> userEntities =
+            repository.findAll(pagination.toPageable()).toList();
 
-        return allUsers.stream()
+        return userEntities.stream()
             .map(mapper::toUserDto)
             .toList();
     }
