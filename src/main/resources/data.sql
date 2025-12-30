@@ -45,6 +45,8 @@ INSERT INTO orders (id, user_id, status) VALUES
     (5, 5, 'CANCELLED'),
     (6, 6, 'APPROVED');
 
+-- Order Lines
+
 -- Order Items
 INSERT INTO order_items (order_id, product_id) VALUES
     (1, 1),

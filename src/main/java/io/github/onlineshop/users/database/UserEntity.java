@@ -29,7 +29,7 @@ public class UserEntity {
     @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate;
 
-    @OneToMany(mappedBy = "orderOwner")
+    @OneToMany(mappedBy = "userEntity")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OrderEntity> orders;
 

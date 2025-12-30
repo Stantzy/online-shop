@@ -54,6 +54,10 @@ public class JwtTokenUtils {
         return signingKeyCache;
     }
 
+    public String getId(String token) {
+        return getAllClaimsFromToken(token).getId();
+    }
+
     public String getUsername(String token) {
         return getAllClaimsFromToken(token).getSubject();
     }

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -20,21 +21,17 @@ public class OrderEntity {
     @Column(name = "status", nullable = false)
     private OrderStatus orderStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity orderOwner;
+    private UserEntity userEntity;
 
-    @Transient
-    private Long userId;
-
-    @ManyToMany
-    @JoinTable(
-        name = "order_items",
-        joinColumns = @JoinColumn(name = "order_id"),
-        inverseJoinColumns = @JoinColumn(name = "product_id")
+    @OneToMany(
+        mappedBy = "order",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
     )
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<ProductEntity> products;
+    private List<OrderLineEntity> orderLines;
 
     public OrderEntity() {}
 
@@ -54,27 +51,19 @@ public class OrderEntity {
         this.orderStatus = orderStatus;
     }
 
-    public UserEntity getOrderOwner() {
-        return orderOwner;
+    public UserEntity getUserEntity() {
+        return userEntity;
     }
 
-    public void setOrderOwner(UserEntity orderOwner) {
-        this.orderOwner = orderOwner;
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
-    public Long getUserId() {
-        return userId;
+    public List<OrderLineEntity> getOrderLines() {
+        return orderLines;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public List<ProductEntity> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<ProductEntity> products) {
-        this.products = products;
+    public void setOrderLines(List<OrderLineEntity> orderLines) {
+        this.orderLines = orderLines;
     }
 }

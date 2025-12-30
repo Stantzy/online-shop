@@ -6,7 +6,7 @@ import java.util.List;
 
 public record OrderDto(
     Long userId,
-    List<Long> productIds,
+    List<Long> orderLineIds,
     OrderStatus orderStatus
 ) {
 

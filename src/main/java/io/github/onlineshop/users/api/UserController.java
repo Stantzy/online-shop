@@ -46,7 +46,7 @@ public class UserController {
             pagination.pageNumber(),
             pagination.pageSize()
         );
-        
+
         return ResponseEntity.ok(
             userService.getAllUsers(pagination)
         );
