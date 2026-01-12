@@ -38,27 +38,14 @@ INSERT INTO products (id, name, price, quantity) VALUES
 
 -- Orders
 INSERT INTO orders (id, user_id, status) VALUES
-    (1, 1, 'CANCELLED'),
-    (2, 2, 'CREATED'),
+    (1, 1, 'CART'),
+    (2, 2, 'CART'),
     (3, 3, 'CREATED'),
     (4, 4, 'APPROVED'),
     (5, 5, 'CANCELLED'),
     (6, 6, 'APPROVED');
 
 -- Order Lines
-
--- Order Items
-INSERT INTO order_items (order_id, product_id) VALUES
-    (1, 1),
-    (1, 5),
-    (1, 6),
-    (2, 2),
-    (2, 3),
-    (3, 4),
-    (3, 7),
-    (4, 1),
-    (4, 8),
-    (5, 10),
-    (5, 12),
-    (6, 15),
-    (6, 16);
+INSERT INTO order_lines (id, product_id, price_at_time, quantity, order_id) VALUES
+    (1, 1, 20.0, 5, 1),
+    (2, 2, 50.0, 10, 2);

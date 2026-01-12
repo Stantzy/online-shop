@@ -1,16 +1,16 @@
 package io.github.onlineshop.orders.domain;
 
 import io.github.onlineshop.orders.OrderStatus;
-import io.github.onlineshop.orders.database.OrderLineEntity;
-import io.github.onlineshop.users.database.UserEntity;
+import io.github.onlineshop.users.domain.User;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Order {
     private Long id;
     private OrderStatus orderStatus;
-    private UserEntity userEntity;
-    private List<OrderLineEntity> products;
+    private User user;
+    private List<OrderLine> orderLines;
 
     public Order() {
     }
@@ -18,13 +18,35 @@ public class Order {
     public Order(
         Long id,
         OrderStatus orderStatus,
-        UserEntity userEntity,
-        List<OrderLineEntity> products
+        User user,
+        List<OrderLine> orderLines
     ) {
         this.id = id;
         this.orderStatus = orderStatus;
-        this.userEntity = userEntity;
-        this.products = products;
+        this.user = user;
+        this.orderLines = orderLines;
+    }
+
+    public BigDecimal getTotalPrice() {
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        for(OrderLine orderLine : orderLines) {
+            BigDecimal price = orderLine.getPriceAtTime();
+            long quantity = orderLine.getQuantity();
+            totalPrice =
+                totalPrice.add(price.multiply(BigDecimal.valueOf(quantity)));
+        }
+
+        return totalPrice;
+    }
+
+    public Long getTotalItems() {
+        Long result = 0L;
+
+        for(OrderLine orderLine : orderLines)
+            result += orderLine.getQuantity();
+
+        return result;
     }
 
     public Long getId() {
@@ -43,19 +65,19 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public List<OrderLineEntity> getProducts() {
-        return products;
+    public List<OrderLine> getOrderLines() {
+        return orderLines;
     }
 
-    public void setProducts(List<OrderLineEntity> products) {
-        this.products = products;
+    public void setOrderLines(List<OrderLine> orderLines) {
+        this.orderLines = orderLines;
     }
 }

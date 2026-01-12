@@ -1,8 +1,5 @@
 package io.github.onlineshop.users;
 
-import io.github.onlineshop.orders.OrderMapper;
-import io.github.onlineshop.orders.api.dto.OrderDto;
-import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.security.UserRole;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
@@ -16,11 +13,7 @@ import java.util.List;
 
 @Component
 public class UserMapper {
-    private final OrderMapper orderMapper;
-
-    public UserMapper(OrderMapper orderMapper) {
-        this.orderMapper = orderMapper;
-    }
+    public UserMapper() {}
 
     public UserDto toUserDto(User user) {
         return new UserDto(
@@ -28,14 +21,20 @@ public class UserMapper {
             user.username(),
             user.email(),
             user.registrationDate(),
-            user.orders(),
+            null,
             user.role()
         );
     }
 
     public UserDto toUserDto(UserEntity userEntity) {
-        User user = toDomainUser(userEntity);
-        return toUserDto(user);
+        return new UserDto(
+            userEntity.getId(),
+            userEntity.getUsername(),
+            userEntity.getEmail(),
+            userEntity.getRegistrationDate(),
+            null,
+            userEntity.getRole()
+        );
     }
 
     public User toDomainUser(UserDto userDto) {
@@ -45,7 +44,7 @@ public class UserMapper {
             userDto.email(),
             null,
             userDto.registrationDate(),
-            userDto.orders(),
+            null,
             userDto.role()
         );
     }
@@ -63,33 +62,21 @@ public class UserMapper {
     }
 
     public User toDomainUser(UserEntity userEntity) {
-        List<OrderDto> orderDtoList = userEntity.getOrders()
-            .stream()
-            .map(orderMapper::toOrderDto)
-            .toList();
-
         return new User(
             userEntity.getId(),
             userEntity.getUsername(),
             userEntity.getEmail(),
             userEntity.getPasswordHash(),
             userEntity.getRegistrationDate(),
-            orderDtoList,
+            null,
             userEntity.getRole()
         );
     }
 
     public UserEntity toUserEntity(User user) {
         UserEntity userEntity = new UserEntity();
-        if(user.orders() != null) {
-            List<OrderEntity> orderEntityList = user.orders()
-                .stream()
-                .map(orderMapper::toOrderEntity)
-                .toList();
 
-            userEntity.setOrders(orderEntityList);
-        }
-
+        userEntity.setId(user.id());
         userEntity.setUsername(user.username());
         userEntity.setEmail(user.email());
         userEntity.setPasswordHash(user.passwordHash());
@@ -97,11 +84,6 @@ public class UserMapper {
         userEntity.setRole(user.role());
 
         return userEntity;
-    }
-
-    public UserEntity toUserEntity(UserDto userDto) {
-        User user = toDomainUser(userDto);
-        return toUserEntity(user);
     }
 
     public UserCreateResponse toCreateResponse(UserEntity userEntity) {

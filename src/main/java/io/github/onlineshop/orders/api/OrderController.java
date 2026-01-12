@@ -59,14 +59,6 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<OrderDto> createOrder(
-        @RequestBody OrderDto orderToCreate
-    ) {
-        log.info("Called method createOrder");
-        return ResponseEntity.ok(orderService.createOrder(orderToCreate));
-    }
-
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> deleteOrderById(
         @PathVariable Long id

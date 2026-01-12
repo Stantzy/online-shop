@@ -1,6 +1,6 @@
 package io.github.onlineshop.users.domain;
 
-import io.github.onlineshop.orders.api.dto.OrderDto;
+import io.github.onlineshop.orders.domain.Order;
 import io.github.onlineshop.security.UserRole;
 
 import java.time.LocalDate;
@@ -12,7 +12,7 @@ public record User(
     String email,
     String passwordHash,
     LocalDate registrationDate,
-    List<OrderDto> orders,
+    List<Order> orders,
     UserRole role
 ) {
 }
