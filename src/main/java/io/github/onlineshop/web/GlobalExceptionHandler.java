@@ -1,5 +1,6 @@
 package io.github.onlineshop.web;
 
+import io.github.onlineshop.orders.domain.exception.InsufficientStockException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @ControllerAdvice
@@ -33,6 +35,23 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(errorDto);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponseDto> handleInsufficientStock(
+        InsufficientStockException e
+    ) {
+        log.error("Handle Insufficient Stock exception: ", e);
+
+        ErrorResponseDto errorDto = new ErrorResponseDto(
+            "Insufficient stock for product",
+            e.getMessage(),
+            LocalDateTime.now()
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
             .body(errorDto);
     }
 
