@@ -3,8 +3,8 @@ package io.github.onlineshop.products;
 import io.github.onlineshop.products.api.dto.ProductDto;
 import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.products.database.ProductRepository;
-import io.github.onlineshop.products.domain.Product;
 import io.github.onlineshop.products.domain.ProductService;
+import io.github.onlineshop.products.domain.exception.ProductAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.management.Query;
 import java.math.BigDecimal;
 import java.util.Optional;
 
@@ -89,7 +88,7 @@ public class ProductServiceTest {
 
         // Act & Assert
         assertThatThrownBy(() ->productService.createProduct(inputDto))
-            .isInstanceOf(RuntimeException.class);
+            .isInstanceOf(ProductAlreadyExistsException.class);
 
         verify(repository).existsByName(inputDto.name());
         verify(mapper, never()).toProductDto((ProductEntity) any());

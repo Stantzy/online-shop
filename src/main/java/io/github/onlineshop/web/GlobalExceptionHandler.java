@@ -1,9 +1,8 @@
 package io.github.onlineshop.web;
 
 import io.github.onlineshop.orders.domain.exception.InsufficientStockException;
+import io.github.onlineshop.products.domain.exception.ProductAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @ControllerAdvice
@@ -35,6 +33,23 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(errorDto);
+    }
+
+    @ExceptionHandler(ProductAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleProductAlreadyExists(
+        ProductAlreadyExistsException e
+    ) {
+        log.error("Handle exception: ", e);
+
+        ErrorResponseDto errorDto = new ErrorResponseDto(
+            "Product exists",
+            e.getMessage(),
+            LocalDateTime.now()
+        );
+
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
             .body(errorDto);
     }
 
