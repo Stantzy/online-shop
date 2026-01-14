@@ -4,8 +4,11 @@ import io.github.onlineshop.constants.PathConstants;
 import io.github.onlineshop.security.domain.AuthenticationService;
 import io.github.onlineshop.security.api.dto.JwtRequest;
 import io.github.onlineshop.security.api.dto.JwtResponse;
+import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
+import io.github.onlineshop.security.api.dto.RegistrationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +26,25 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping
-    public ResponseEntity<?> createAuthToken(
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(
         @RequestBody JwtRequest authRequest
     ) {
-        log.info("Called method createAuthToken");
+        log.info("Login attempt for username: {}", authRequest.username());
 
         JwtResponse jwtResponse =
             authenticationService.generateToken(authRequest);
 
         return ResponseEntity.ok(jwtResponse);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<RegistrationResponse> registerUser(
+        @RequestBody UserCreateRequest request
+    ) {
+        log.info("Registration attempt for username: {}", request.username());
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(authenticationService.register(request));
     }
 }
