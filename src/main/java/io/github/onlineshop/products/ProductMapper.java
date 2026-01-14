@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class ProductMapper {
     public ProductDto toProductDto(Product product) {
         return new ProductDto(
+            product.getId(),
             product.getName(),
             product.getQuantity(),
             product.getPrice()
@@ -17,6 +18,7 @@ public class ProductMapper {
 
     public ProductDto toProductDto(ProductEntity productEntity) {
         return new ProductDto(
+            productEntity.getId(),
             productEntity.getName(),
             productEntity.getQuantity(),
             productEntity.getPrice()
@@ -25,7 +27,7 @@ public class ProductMapper {
 
     public Product toDomainProduct(ProductDto productDto) {
         return new Product(
-            null,
+            productDto.id(),
             productDto.name(),
             productDto.quantity(),
             productDto.price()
@@ -44,7 +46,7 @@ public class ProductMapper {
     public ProductEntity toProductEntity(ProductDto productDto) {
         ProductEntity productEntity = new ProductEntity();
 
-        productEntity.setId(null);
+        productEntity.setId(productDto.id());
         productEntity.setName(productDto.name());
         productEntity.setQuantity(productDto.quantity());
         productEntity.setPrice(productDto.price());

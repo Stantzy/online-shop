@@ -98,13 +98,4 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();
     }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteProduct(
-        @RequestParam(name = "productName") String productName
-    ) {
-        log.info("Called method deleteProduct: name={}", productName);
-        productService.deleteProductByName(productName);
-        return ResponseEntity.ok().build();
-    }
 }

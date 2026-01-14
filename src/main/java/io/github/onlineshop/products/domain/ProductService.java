@@ -1,16 +1,16 @@
 package io.github.onlineshop.products.domain;
 
+import io.github.onlineshop.orders.database.OrderLineRepository;
 import io.github.onlineshop.products.ProductMapper;
 import io.github.onlineshop.products.api.dto.ProductDto;
 import io.github.onlineshop.products.api.dto.ProductPaginationRequest;
 import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.products.database.ProductRepository;
+import io.github.onlineshop.products.domain.exception.ProductAlreadyExistsException;
+import io.github.onlineshop.products.domain.exception.ProductInUseException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,13 +23,16 @@ public class ProductService {
 
     private final ProductRepository repository;
     private final ProductMapper mapper;
+    private final OrderLineRepository orderLineRepository;
 
     public ProductService(
         ProductRepository repository,
-        ProductMapper mapper
+        ProductMapper mapper,
+        OrderLineRepository orderLineRepository
     ) {
         this.repository = repository;
         this.mapper = mapper;
+        this.orderLineRepository = orderLineRepository;
     }
 
     public List<ProductDto> getAllProducts() {
@@ -69,6 +72,9 @@ public class ProductService {
 
     public ProductDto createProduct(ProductDto productToCreate) {
         log.info("Called method createProduct");
+
+        if(repository.existsByName(productToCreate.name()))
+            throw new ProductAlreadyExistsException(productToCreate.name());
 
         ProductEntity productEntityToSave =
             mapper.toProductEntity(productToCreate);
@@ -120,12 +126,25 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         log.info("Called method deleteProduct: id={}", id);
+
+        validateProductCanBeDeleted(id);
         repository.deleteById(id);
+
+        log.info("Product successfully deleted: id={}", id);
     }
 
-    @Transactional
-    public void deleteProductByName(String name) {
-        log.info("Called method deleteProductByName: name={}", name);
-        repository.deleteByName(name);
+    private void validateProductCanBeDeleted(Long id) {
+        log.info("Called method validateProductCanBeDeleted: id={}", id);
+
+        ProductEntity productEntity = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Not found product by id = " + id)
+            );
+
+        boolean isInOrders =
+            orderLineRepository.existsByProductEntity(productEntity);
+
+        if(isInOrders)
+            throw new ProductInUseException(productEntity.getName());
     }
 }

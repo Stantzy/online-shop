@@ -41,7 +41,7 @@ public class ProductServiceTest {
     @Test
     void createProduct_validData_productCreated() {
         // Arrange
-        ProductDto inputDto = new ProductDto(NAME, QUANTITY, PRICE);
+        ProductDto inputDto = new ProductDto(VALID_ID, NAME, QUANTITY, PRICE);
 
         ProductEntity entityToSave = new ProductEntity();
         entityToSave.setName(NAME);
@@ -54,7 +54,7 @@ public class ProductServiceTest {
         entityToSave.setQuantity(QUANTITY);
         entityToSave.setPrice(PRICE);
 
-        ProductDto expectedDto = new ProductDto(NAME, QUANTITY, PRICE);
+        ProductDto expectedDto = new ProductDto(VALID_ID, NAME, QUANTITY, PRICE);
 
         when(mapper.toProductEntity(inputDto)).thenReturn(entityToSave);
         when(repository.save(entityToSave)).thenReturn(savedEntity);
@@ -77,7 +77,7 @@ public class ProductServiceTest {
     @Test
     void createProduct_duplicate_throwsException() {
         // Arrange
-        ProductDto inputDto = new ProductDto(NAME, QUANTITY, PRICE);
+        ProductDto inputDto = new ProductDto(VALID_ID, NAME, QUANTITY, PRICE);
 
         ProductEntity entityToSave = new ProductEntity();
         entityToSave.setName(NAME);
@@ -105,7 +105,8 @@ public class ProductServiceTest {
         foundEntity.setQuantity(QUANTITY);
         foundEntity.setPrice(PRICE);
         Optional<ProductEntity> optFoundEntity = Optional.of(foundEntity);
-        ProductDto expectedDto = new ProductDto(NAME, QUANTITY, PRICE);
+        ProductDto expectedDto =
+            new ProductDto(VALID_ID, NAME, QUANTITY, PRICE);
 
         when(repository.findById(VALID_ID)).thenReturn(optFoundEntity);
         when(mapper.toProductDto(optFoundEntity.get())).thenReturn(expectedDto);
