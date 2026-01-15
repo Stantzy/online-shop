@@ -3,14 +3,11 @@ package io.github.onlineshop.orders.domain;
 import io.github.onlineshop.orders.OrderLineMapper;
 import io.github.onlineshop.orders.OrderMapper;
 import io.github.onlineshop.orders.OrderStatus;
-import io.github.onlineshop.orders.api.dto.OrderAddToCartRequest;
-import io.github.onlineshop.orders.api.dto.OrderAddToCartResponse;
-import io.github.onlineshop.orders.api.dto.OrderDto;
+import io.github.onlineshop.orders.api.dto.*;
 import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.orders.database.OrderLineEntity;
 import io.github.onlineshop.orders.database.OrderLineRepository;
 import io.github.onlineshop.orders.database.OrderRepository;
-import io.github.onlineshop.orders.domain.exception.InsufficientStockException;
 import io.github.onlineshop.products.ProductMapper;
 import io.github.onlineshop.products.api.dto.ProductDto;
 import io.github.onlineshop.products.database.ProductEntity;
@@ -26,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.naming.InsufficientResourcesException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -89,6 +86,11 @@ public class OrderService {
         return orderMapper.toOrderDto(orderEntity);
     }
 
+    public void deleteOrderById(Long id) {
+        log.info("Called method deleteOrderById: id={}", id);
+        orderRepository.deleteById(id);
+    }
+
     // TODO need more informative logs
     public OrderAddToCartResponse addItemToCart(
         OrderAddToCartRequest request,
@@ -138,20 +140,55 @@ public class OrderService {
 
         domainProduct.decreaseQuantity(request.quantity());
 
-        orderRepository.save(orderMapper.toOrderEntity(cart, userEntity));
+        OrderEntity cartEntity = orderMapper.toOrderEntity(cart, userEntity);
+        List<OrderLineEntity> orderLineEntityList =
+            orderLineMapper.toListOfOrderLineEntities(lines, cartEntity);
+        cartEntity.setOrderLines(orderLineEntityList);
+
+        orderRepository.save(cartEntity);
         productRepository.save(productMapper.toProductEntity(domainProduct));
 
-        List<ProductDto> productDtoList = cart.getOrderLines().stream()
-            .map(OrderLine::getProduct)
-            .map(productMapper::toProductDto)
+        List<OrderLineDto> orderLineDtoList = lines.stream()
+            .map(orderLineMapper::toOrderLineDto)
             .toList();
 
         return new OrderAddToCartResponse(
             cart.getId(),
             cart.getTotalItems(),
             cart.getTotalPrice(),
-            productDtoList
+            orderLineDtoList
         );
+    }
+
+    public OrderCartDto getCart(String authHeader) {
+        Long userId = getUserIdFromAuthHeader(authHeader);
+        Order cart = findOrCreateCart(userId);
+        BigDecimal totalPrice = cart.getTotalPrice();
+        Long itemsQuantity = cart.getTotalItems();
+
+        List<OrderLineDto> orderLineDtoList = cart.getOrderLines()
+            .stream()
+            .map(orderLineMapper::toOrderLineDto)
+            .toList();
+
+        OrderCartDto orderCartDto = new OrderCartDto();
+
+        orderCartDto.setOrderLineDtoList(orderLineDtoList);
+        orderCartDto.setTotalPrice(totalPrice);
+        orderCartDto.setItemsQuantity(itemsQuantity);
+
+        return orderCartDto;
+    }
+
+    private Order findOrCreateCart(Long userId) {
+        UserEntity userEntity = userRepository.findById(userId)
+            .orElseThrow(
+                () -> new EntityNotFoundException(
+                    "Not found user by id = " + userId
+                )
+            );
+
+        return findOrCreateCart(userEntity);
     }
 
     private Order findOrCreateCart(UserEntity userEntity) {
@@ -187,11 +224,6 @@ public class OrderService {
         String userId = jwtTokenUtils.getId(token);
 
         return Long.parseLong(userId);
-    }
-
-    public void deleteOrderById(Long id) {
-        log.info("Called method deleteOrderById: id={}", id);
-        orderRepository.deleteById(id);
     }
 
     // TODO approveOrder()

@@ -9,7 +9,7 @@ public record OrderAddToCartResponse(
     Long cartId,
     Long totalItems,
     BigDecimal totalPrice,
-    List<ProductDto> items
+    List<OrderLineDto> cartItems
 ) {
 
 }

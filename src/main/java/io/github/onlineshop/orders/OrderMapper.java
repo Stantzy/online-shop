@@ -1,6 +1,8 @@
 package io.github.onlineshop.orders;
 
+import io.github.onlineshop.orders.api.dto.OrderCartDto;
 import io.github.onlineshop.orders.api.dto.OrderDto;
+import io.github.onlineshop.orders.api.dto.OrderLineDto;
 import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.orders.database.OrderLineEntity;
 import io.github.onlineshop.orders.domain.Order;
@@ -31,6 +33,7 @@ public class OrderMapper {
             .toList();
 
         return new OrderDto(
+            order.getId(),
             order.getUser().id(),
             productIds,
             order.getOrderStatus()
@@ -44,6 +47,7 @@ public class OrderMapper {
             .toList();
 
         return new OrderDto(
+            orderEntity.getId(),
             orderEntity.getUserEntity().getId(),
             productIds,
             orderEntity.getOrderStatus()
@@ -59,7 +63,7 @@ public class OrderMapper {
 
         OrderEntity orderEntity = new OrderEntity();
 
-        orderEntity.setId(null);
+        orderEntity.setId(orderDto.orderId());
         orderEntity.setUserEntity(userEntity);
         orderEntity.setOrderStatus(orderDto.orderStatus());
 

@@ -30,11 +30,11 @@ public class Order {
     public BigDecimal getTotalPrice() {
         BigDecimal totalPrice = BigDecimal.ZERO;
 
-        for(OrderLine orderLine : orderLines) {
-            BigDecimal price = orderLine.getPriceAtTime();
-            long quantity = orderLine.getQuantity();
-            totalPrice =
-                totalPrice.add(price.multiply(BigDecimal.valueOf(quantity)));
+        for(OrderLine line : orderLines) {
+            BigDecimal productPrice = line.getPriceAtTime();
+            BigDecimal productQuantity = BigDecimal.valueOf(line.getQuantity());
+            BigDecimal lineTotalPrice = productPrice.multiply(productQuantity);
+            totalPrice = totalPrice.add(lineTotalPrice) ;
         }
 
         return totalPrice;

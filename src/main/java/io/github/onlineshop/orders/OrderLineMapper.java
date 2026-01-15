@@ -1,5 +1,6 @@
 package io.github.onlineshop.orders;
 
+import io.github.onlineshop.orders.api.dto.OrderLineDto;
 import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.orders.database.OrderLineEntity;
 import io.github.onlineshop.orders.domain.OrderLine;
@@ -72,5 +73,14 @@ public class OrderLineMapper {
         return orderLineList.stream()
             .map(orderLine -> toOrderLineEntity(orderLine, orderEntity))
             .toList();
+    }
+
+    public OrderLineDto toOrderLineDto(OrderLine orderLine) {
+        return new OrderLineDto(
+            orderLine.getId(),
+            orderLine.getProduct(),
+            orderLine.getPriceAtTime(),
+            orderLine.getQuantity()
+        );
     }
 }

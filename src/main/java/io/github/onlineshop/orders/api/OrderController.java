@@ -1,6 +1,7 @@
 package io.github.onlineshop.orders.api;
 
 import io.github.onlineshop.constants.PathConstants;
+import io.github.onlineshop.orders.api.dto.OrderCartDto;
 import io.github.onlineshop.orders.api.dto.OrderAddToCartRequest;
 import io.github.onlineshop.orders.api.dto.OrderAddToCartResponse;
 import io.github.onlineshop.orders.api.dto.OrderDto;
@@ -42,7 +43,18 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
-    @PostMapping("/addToCart")
+    @GetMapping("/cart/items")
+    public ResponseEntity<OrderCartDto> getCart(
+        @RequestHeader(name = "Authorization") String authHeader
+    ) {
+        log.info("Called method getCart");
+
+        OrderCartDto cartDto = orderService.getCart(authHeader);
+
+        return ResponseEntity.ok(cartDto);
+    }
+
+    @PostMapping("/cart/items")
     public ResponseEntity<OrderAddToCartResponse> addItemToCart(
         @RequestBody OrderAddToCartRequest addToCartRequest,
         @RequestHeader(name = "Authorization") String authHeader
