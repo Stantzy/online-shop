@@ -59,7 +59,6 @@ public class AuthenticationService {
     }
 
     public RegistrationResponse register(UserCreateRequest request) {
-
         UserCreateResponse newUser = userService.createUser(request);
         JwtResponse jwtToken = null;
 

@@ -6,9 +6,12 @@ import io.github.onlineshop.orders.api.dto.OrderAddToCartRequest;
 import io.github.onlineshop.orders.api.dto.OrderAddToCartResponse;
 import io.github.onlineshop.orders.api.dto.OrderDto;
 import io.github.onlineshop.orders.domain.OrderService;
+import io.github.onlineshop.security.domain.CurrentUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +23,14 @@ public class OrderController {
         LoggerFactory.getLogger(OrderController.class);
 
     private final OrderService orderService;
+    private final CurrentUserService currentUserService;
 
     public OrderController(
-        OrderService orderService
+        OrderService orderService,
+        CurrentUserService currentUserService
     ) {
         this.orderService = orderService;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping
@@ -44,20 +50,18 @@ public class OrderController {
     }
 
     @GetMapping("/cart/items")
-    public ResponseEntity<OrderCartDto> getCart(
-        @RequestHeader(name = "Authorization") String authHeader
-    ) {
+    public ResponseEntity<OrderCartDto> getCart() {
         log.info("Called method getCart");
 
-        OrderCartDto cartDto = orderService.getCart(authHeader);
+        Long userId = currentUserService.getUserId();
+        OrderCartDto cartDto = orderService.getCart(userId);
 
         return ResponseEntity.ok(cartDto);
     }
 
     @PostMapping("/cart/items")
     public ResponseEntity<OrderAddToCartResponse> addItemToCart(
-        @RequestBody OrderAddToCartRequest addToCartRequest,
-        @RequestHeader(name = "Authorization") String authHeader
+        @RequestBody OrderAddToCartRequest addToCartRequest
     ) {
         log.info(
             "Called method addItemToCart: productId={}, quantity={}",
@@ -65,8 +69,9 @@ public class OrderController {
             addToCartRequest.quantity()
         );
 
+        Long userId = currentUserService.getUserId();
         OrderAddToCartResponse response =
-            orderService.addItemToCart(addToCartRequest, authHeader);
+            orderService.addItemToCart(addToCartRequest, userId);
 
         return ResponseEntity.ok(response);
     }

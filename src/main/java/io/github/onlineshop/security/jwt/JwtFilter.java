@@ -1,5 +1,6 @@
 package io.github.onlineshop.security.jwt;
 
+import io.github.onlineshop.security.UserPrincipal;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,25 +35,25 @@ public class JwtFilter extends OncePerRequestFilter {
         FilterChain filterChain
     ) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        String username = null;
         String jwt = null;
+        UserPrincipal userPrincipal = null;
 
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
             try {
-                username = jwtTokenUtils.getUsername(jwt);
+                userPrincipal = jwtTokenUtils.getUserPrincipal(jwt);
             } catch (ExpiredJwtException e) {
                 log.debug("The JWT token lifetime has expired");
             }
         }
 
         if(
-            username != null &&
+            userPrincipal != null &&
             SecurityContextHolder.getContext().getAuthentication() == null
         ) {
             UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(
-                    username,
+                    jwtTokenUtils.getUserPrincipal(jwt),
                     null,
                     jwtTokenUtils
                         .getRoles(jwt).stream()

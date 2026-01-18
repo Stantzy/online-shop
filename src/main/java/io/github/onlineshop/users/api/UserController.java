@@ -1,6 +1,7 @@
 package io.github.onlineshop.users.api;
 
 import io.github.onlineshop.constants.PathConstants;
+import io.github.onlineshop.security.domain.CurrentUserService;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.users.api.dto.request.UserModifyRequest;
 import io.github.onlineshop.users.api.dto.request.UserPaginationRequest;
@@ -28,11 +29,14 @@ public class UserController {
         LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final CurrentUserService currentUserService;
 
     public UserController(
-        UserService userService
+        UserService userService,
+        CurrentUserService currentUserService
     ) {
         this.userService = userService;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping
@@ -59,6 +63,24 @@ public class UserController {
     ) {
         log.info("Called method getUserById");;
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getProfileInfo() {
+        log.info("Called method getProfileInfo");
+
+        Long userId = currentUserService.getUserId();
+        UserDto currentUser = userService.getUserById(userId);
+
+        return ResponseEntity.ok(currentUser);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserDto> updateProfileInfo(
+        @RequestBody UserModifyRequest request
+    ) {
+        Long id = currentUserService.getUserId();
+        return null;
     }
 
     @PostMapping

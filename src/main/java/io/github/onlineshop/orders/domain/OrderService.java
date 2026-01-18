@@ -6,14 +6,11 @@ import io.github.onlineshop.orders.OrderStatus;
 import io.github.onlineshop.orders.api.dto.*;
 import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.orders.database.OrderLineEntity;
-import io.github.onlineshop.orders.database.OrderLineRepository;
 import io.github.onlineshop.orders.database.OrderRepository;
 import io.github.onlineshop.products.ProductMapper;
-import io.github.onlineshop.products.api.dto.ProductDto;
 import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.products.database.ProductRepository;
 import io.github.onlineshop.products.domain.Product;
-import io.github.onlineshop.security.jwt.JwtTokenUtils;
 import io.github.onlineshop.users.UserMapper;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.database.UserRepository;
@@ -37,32 +34,26 @@ public class OrderService {
     private final OrderLineMapper orderLineMapper;
     private final ProductMapper productMapper;
     private final OrderRepository orderRepository;
-    private final OrderLineRepository orderLineRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ProductRepository productRepository;
-    private final JwtTokenUtils jwtTokenUtils;
 
     public OrderService(
         OrderRepository orderRepository,
-        OrderLineRepository orderLineRepository,
         OrderMapper orderMapper,
         UserRepository userRepository,
         UserMapper userMapper,
         ProductRepository productRepository,
         ProductMapper productMapper,
-        OrderLineMapper orderLineMapper,
-        JwtTokenUtils jwtTokenUtils
+        OrderLineMapper orderLineMapper
     ) {
         this.orderRepository = orderRepository;
-        this.orderLineRepository = orderLineRepository;
         this.orderMapper = orderMapper;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.orderLineMapper = orderLineMapper;
-        this.jwtTokenUtils = jwtTokenUtils;
     }
 
     public List<OrderDto> getAllOrders() {
@@ -94,14 +85,12 @@ public class OrderService {
     // TODO need more informative logs
     public OrderAddToCartResponse addItemToCart(
         OrderAddToCartRequest request,
-        String authHeader
+        Long userId
     ) {
         log.info(
             "Called method addItemToCart: productId={}, quantity={}",
             request.productId(), request.quantity()
         );
-
-        Long userId = getUserIdFromAuthHeader(authHeader);
 
         // getUserOrThrow()
         UserEntity userEntity = userRepository.findById(userId)
@@ -160,8 +149,7 @@ public class OrderService {
         );
     }
 
-    public OrderCartDto getCart(String authHeader) {
-        Long userId = getUserIdFromAuthHeader(authHeader);
+    public OrderCartDto getCart(Long userId) {
         Order cart = findOrCreateCart(userId);
         BigDecimal totalPrice = cart.getTotalPrice();
         Long itemsQuantity = cart.getTotalItems();
@@ -208,22 +196,6 @@ public class OrderService {
         }
 
         return orderMapper.toDomainOrder(cartEntityOptional.get());
-    }
-
-    // FIXME move this method to utils(1) or security(2)
-    private Long getUserIdFromAuthHeader(String authHeader) {
-        final String BEARER = "Bearer ";
-        String token = null;
-
-        log.info("getUserIdFromAuthHeader: authHeader={}", authHeader);
-        if(authHeader != null && authHeader.startsWith(BEARER))
-            token = authHeader.substring(BEARER.length());
-
-        log.info("getUserIdFromAuthHeader: token={}", token);
-
-        String userId = jwtTokenUtils.getId(token);
-
-        return Long.parseLong(userId);
     }
 
     // TODO approveOrder()

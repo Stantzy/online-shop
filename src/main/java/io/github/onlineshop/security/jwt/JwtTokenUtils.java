@@ -54,6 +54,18 @@ public class JwtTokenUtils {
         return signingKeyCache;
     }
 
+    public UserPrincipal getUserPrincipal(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+
+        return new UserPrincipal(
+            Long.parseLong(claims.get("id").toString()),
+            claims.getSubject(),
+            claims.get("email").toString(),
+            null,
+            null
+        );
+    }
+
     public String getId(String token) {
         return getAllClaimsFromToken(token).get("id").toString();
     }

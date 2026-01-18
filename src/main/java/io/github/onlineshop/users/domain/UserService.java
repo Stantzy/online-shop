@@ -1,5 +1,6 @@
 package io.github.onlineshop.users.domain;
 
+import io.github.onlineshop.orders.api.dto.OrderDto;
 import io.github.onlineshop.security.UserRole;
 import io.github.onlineshop.users.UserMapper;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
