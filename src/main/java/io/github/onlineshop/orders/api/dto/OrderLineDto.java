@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 public record OrderLineDto(
     Long id,
-    Product product,
+    Long productId,
     BigDecimal priceAtTime,
     Long quantity
 ) {

@@ -78,7 +78,7 @@ public class OrderLineMapper {
     public OrderLineDto toOrderLineDto(OrderLine orderLine) {
         return new OrderLineDto(
             orderLine.getId(),
-            orderLine.getProduct(),
+            orderLine.getProduct().getId(),
             orderLine.getPriceAtTime(),
             orderLine.getQuantity()
         );
