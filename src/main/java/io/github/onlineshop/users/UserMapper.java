@@ -21,7 +21,6 @@ public class UserMapper {
             user.username(),
             user.email(),
             user.registrationDate(),
-            null,
             user.role()
         );
     }
@@ -32,7 +31,6 @@ public class UserMapper {
             userEntity.getUsername(),
             userEntity.getEmail(),
             userEntity.getRegistrationDate(),
-            null,
             userEntity.getRole()
         );
     }
@@ -99,8 +97,7 @@ public class UserMapper {
     public UserModifyResponse toModifyResponse(UserEntity userEntity) {
         return new UserModifyResponse(
             userEntity.getUsername(),
-            userEntity.getEmail(),
-            userEntity.getRole()
+            userEntity.getEmail()
         );
     }
 }

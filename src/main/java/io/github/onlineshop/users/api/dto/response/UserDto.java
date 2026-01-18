@@ -1,17 +1,14 @@
 package io.github.onlineshop.users.api.dto.response;
 
-import io.github.onlineshop.orders.api.dto.OrderDto;
 import io.github.onlineshop.security.UserRole;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public record UserDto(
     Long id,
     String username,
     String email,
     LocalDate registrationDate,
-    List<OrderDto> orders,
     UserRole role
 ) {
 

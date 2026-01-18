@@ -76,11 +76,20 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserDto> updateProfileInfo(
+    public ResponseEntity<UserModifyResponse> updateCurrentUserInfo(
         @RequestBody UserModifyRequest request
     ) {
-        Long id = currentUserService.getUserId();
-        return null;
+        log.info(
+            "Called updateCurrentUserInfo: {}, {}",
+            request.username(),
+            request.email()
+        );
+
+        Long userId = currentUserService.getUserId();
+        UserModifyResponse updatedUser =
+            userService.updateUser(userId, request);
+
+        return ResponseEntity.ok(updatedUser);
     }
 
     @PostMapping
@@ -93,7 +102,8 @@ public class UserController {
             .body(userService.createUser(userToCreate));
     }
 
-    @PutMapping("/{id}/update_user")
+    @PutMapping("/{id}/update")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserModifyResponse> updateUser(
         @PathVariable Long id,
         @RequestBody UserModifyRequest userToModify

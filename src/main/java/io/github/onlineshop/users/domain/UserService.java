@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -87,38 +88,31 @@ public class UserService {
         return mapper.toCreateResponse(savedEntity);
     }
 
-    public UserModifyResponse updateUserRole(
-        Long id,
-        UserModifyRequest userToModify
-    ) {
-        log.info("Called method updateUserRole");
-
-        UserEntity entityToUpdate =
-            repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                    "Not found user by id " + id)
-                );
-
-        entityToUpdate.setRole(userToModify.role());
-
-        UserEntity updatedEntity = repository.save(entityToUpdate);
-
-        return mapper.toModifyResponse(updatedEntity);
-    }
-
     public UserModifyResponse updateUser(
         Long id,
         UserModifyRequest userToModify
     ) {
-        log.info("Called method updateUser");
+        log.info(
+            "Called method updateUser: userId={}, newUsername={}, newEmail={}",
+            id,
+            userToModify.username(),
+            userToModify.email()
+        );
+
         UserEntity entityToUpdate =
             repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                     "Not found user by id " + id)
                 );
 
-        entityToUpdate.setUsername(userToModify.username());
-        entityToUpdate.setEmail(userToModify.email());
+        validateUnique("username", userToModify.username());
+        validateUnique("email", userToModify.email());
+
+        if(!strIsNullOrIsBlank(userToModify.username()))
+            entityToUpdate.setUsername(userToModify.username());
+
+        if(!strIsNullOrIsBlank(userToModify.email()))
+            entityToUpdate.setEmail(userToModify.email());
 
         UserEntity updatedEntity = repository.save(entityToUpdate);
 
@@ -154,5 +148,27 @@ public class UserService {
     public void deleteUserById(Long id) {
         log.info("Called method deleteUserById: id={}", id);
         repository.deleteById(id);
+    }
+
+    private void validateUnique(String fieldName, String value) {
+        if(strIsNullOrIsBlank(fieldName) || strIsNullOrIsBlank(value))
+            return;
+
+        boolean alreadyExists = switch(fieldName.toLowerCase()) {
+            case "username" -> repository.findByUsername(value).isPresent();
+            case "email" -> repository.findByEmail(value).isPresent();
+            default -> throw new
+                IllegalArgumentException("Unexpected value: " + fieldName);
+        };
+
+        if(alreadyExists) {
+            throw new IllegalArgumentException(
+                fieldName + " is already in use: " + value
+            );
+        }
+    }
+
+    private boolean strIsNullOrIsBlank(String str) {
+        return str == null || str.isBlank();
     }
 }
