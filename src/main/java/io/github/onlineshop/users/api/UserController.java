@@ -11,6 +11,7 @@ import io.github.onlineshop.users.api.dto.response.UserDto;
 import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.domain.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -59,7 +60,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(
-        @PathVariable Long id
+        @PathVariable @NotNull Long id
     ) {
         log.info("Called method getUserById");;
         return ResponseEntity.ok(userService.getUserById(id));
@@ -77,7 +78,7 @@ public class UserController {
 
     @PutMapping("/me")
     public ResponseEntity<UserModifyResponse> updateCurrentUserInfo(
-        @RequestBody UserModifyRequest request
+        @RequestBody @Valid UserModifyRequest request
     ) {
         log.info(
             "Called updateCurrentUserInfo: {}, {}",
@@ -93,9 +94,8 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserCreateResponse> createUser(
-        @RequestBody UserCreateRequest userToCreate
+        @RequestBody @Valid UserCreateRequest userToCreate
     ) {
         log.info("Called method createUser");
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -103,10 +103,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}/update")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserModifyResponse> updateUser(
-        @PathVariable Long id,
-        @RequestBody UserModifyRequest userToModify
+        @PathVariable @NotNull Long id,
+        @RequestBody @Valid UserModifyRequest userToModify
     ) {
         log.info("Called method updateUser");
         return ResponseEntity.ok(userService.updateUser(id, userToModify));
@@ -114,8 +113,8 @@ public class UserController {
 
     @PutMapping("/{id}/change_password")
     public ResponseEntity<Boolean> changePassword(
-        @PathVariable Long id,
-        @RequestBody UserPasswordChangeRequest passwordChangeRequest
+        @PathVariable @NotNull Long id,
+        @RequestBody @Valid UserPasswordChangeRequest passwordChangeRequest
     ) {
         log.info("Called method changePassword: id={}", id);
         return ResponseEntity.ok(
@@ -125,7 +124,7 @@ public class UserController {
 
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> deleteUserById(
-        @PathVariable Long id
+        @PathVariable @NotNull Long id
     ) {
         log.info("Called method deleteUserById: id={}", id);
         userService.deleteUserById(id);
