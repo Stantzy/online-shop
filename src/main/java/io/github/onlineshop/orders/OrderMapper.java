@@ -1,22 +1,15 @@
 package io.github.onlineshop.orders;
 
-import io.github.onlineshop.orders.api.dto.OrderCartDto;
 import io.github.onlineshop.orders.api.dto.OrderDto;
-import io.github.onlineshop.orders.api.dto.OrderLineDto;
 import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.orders.database.OrderLineEntity;
 import io.github.onlineshop.orders.domain.Order;
 import io.github.onlineshop.orders.domain.OrderLine;
-import io.github.onlineshop.products.database.ProductEntity;
-import io.github.onlineshop.products.domain.Product;
-import io.github.onlineshop.users.UserMapper;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.domain.User;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class OrderMapper {

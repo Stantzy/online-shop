@@ -1,7 +1,5 @@
 package io.github.onlineshop.orders.api.dto;
 
-import io.github.onlineshop.products.api.dto.ProductDto;
-
 import java.math.BigDecimal;
 import java.util.List;
 

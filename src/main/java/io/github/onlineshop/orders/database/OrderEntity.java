@@ -1,13 +1,9 @@
 package io.github.onlineshop.orders.database;
 
 import io.github.onlineshop.orders.OrderStatus;
-import io.github.onlineshop.products.database.ProductEntity;
 import io.github.onlineshop.users.database.UserEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Entity

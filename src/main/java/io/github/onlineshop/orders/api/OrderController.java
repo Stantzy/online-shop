@@ -1,17 +1,14 @@
 package io.github.onlineshop.orders.api;
 
 import io.github.onlineshop.constants.PathConstants;
-import io.github.onlineshop.orders.api.dto.OrderCartDto;
-import io.github.onlineshop.orders.api.dto.OrderAddToCartRequest;
-import io.github.onlineshop.orders.api.dto.OrderAddToCartResponse;
-import io.github.onlineshop.orders.api.dto.OrderDto;
+import io.github.onlineshop.orders.api.dto.*;
 import io.github.onlineshop.orders.domain.OrderService;
 import io.github.onlineshop.security.domain.CurrentUserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,7 +58,7 @@ public class OrderController {
 
     @PostMapping("/cart/items")
     public ResponseEntity<OrderAddToCartResponse> addItemToCart(
-        @RequestBody OrderAddToCartRequest addToCartRequest
+        @RequestBody @Valid OrderAddToCartRequest addToCartRequest
     ) {
         log.info(
             "Called method addItemToCart: productId={}, quantity={}",
@@ -76,12 +73,61 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/cart/items")
+    public ResponseEntity<Void> clearCart() {
+        log.info(
+            "Called method clearCart"
+        );
+
+        Long userId = currentUserService.getUserId();
+        orderService.clearCart(userId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/cart/items/{lineId}")
+    public ResponseEntity<OrderCartDto> updateQuantity(
+        @PathVariable @NotNull Long lineId,
+        @RequestParam @NotNull Long newQuantity
+    ) {
+        log.info(
+            "Called method updateQuantity: lineId={}, newQuantity={}",
+            lineId,
+            newQuantity
+        );
+
+        Long userId = currentUserService.getUserId();
+
+        OrderCartDto response =
+            orderService.updateQuantityOfProductInCart(
+                userId,
+                lineId,
+                newQuantity
+            );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/cart/items/{lineId}")
+    public ResponseEntity<Void> deleteItemFromCart(
+        @PathVariable @NotNull Long lineId
+    ) {
+        log.info("Called method deleteItemFromCart: lineId={}", lineId);
+
+        Long userId = currentUserService.getUserId();
+        orderService.deleteItemFromCart(userId, lineId);
+
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> deleteOrderById(
-        @PathVariable Long id
+        @PathVariable @NotNull Long id
     ) {
         log.info("Called deleteOrderById: id={}", id);
+
         orderService.deleteOrderById(id);
+
         return ResponseEntity.ok().build();
     }
 }

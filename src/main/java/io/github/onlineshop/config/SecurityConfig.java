@@ -140,6 +140,6 @@ public class SecurityConfig {
         // Order management endpoints
         auth.requestMatchers(HttpMethod.GET, PathConstants.ORDER).hasRole("ADMIN");
         auth.requestMatchers(HttpMethod.PUT, PathConstants.ORDER + "/*").hasRole("ADMIN");
-
+        auth.requestMatchers(HttpMethod.DELETE, PathConstants.ORDER + "/*/delete").hasRole("ADMIN");
     }
 }
