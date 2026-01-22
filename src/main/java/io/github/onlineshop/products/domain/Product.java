@@ -1,6 +1,5 @@
 package io.github.onlineshop.products.domain;
 
-import io.github.onlineshop.orders.api.dto.OrderAddToCartRequest;
 import io.github.onlineshop.orders.domain.exception.InsufficientStockException;
 
 import java.math.BigDecimal;

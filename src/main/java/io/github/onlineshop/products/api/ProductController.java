@@ -80,17 +80,6 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
 
-    @PutMapping("/{id}/update_price")
-    public ResponseEntity<ProductDto> updateProductPrice(
-        @PathVariable @NotNull Long id,
-        @RequestParam(name = "newPrice") BigDecimal newPrice
-    ) {
-        log.info("Called updateProductPrice: id={}, newPrice={}", id, newPrice);
-
-        return ResponseEntity
-            .ok(productService.updateProductPrice(id, newPrice));
-    }
-
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> deleteProduct(
         @PathVariable @NotNull Long id

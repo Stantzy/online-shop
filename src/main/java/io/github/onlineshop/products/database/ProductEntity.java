@@ -1,6 +1,5 @@
 package io.github.onlineshop.products.database;
 
-import io.github.onlineshop.orders.database.OrderLineEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

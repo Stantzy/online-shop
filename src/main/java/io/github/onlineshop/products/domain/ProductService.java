@@ -106,24 +106,6 @@ public class ProductService {
         return mapper.toProductDto(entityToUpdate);
     }
 
-    public ProductDto updateProductPrice(Long id, BigDecimal newPrice) {
-        log.info("Called method updateProductPrice: id={}", id);
-
-        ProductEntity entityToUpdate = repository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                "Not found product by id = " + id)
-            );
-
-        if(newPrice.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Price can't be negative");
-        }
-
-        entityToUpdate.setPrice(newPrice);
-        ProductEntity updatedProduct = repository.save(entityToUpdate);
-
-        return mapper.toProductDto(updatedProduct);
-    }
-
     public void deleteProduct(Long id) {
         log.info("Called method deleteProduct: id={}", id);
 
