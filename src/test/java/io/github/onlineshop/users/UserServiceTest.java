@@ -56,7 +56,6 @@ class UserServiceTest {
                 userEntity.getUsername(),
                 userEntity.getEmail(),
                 userEntity.getRegistrationDate(),
-                Collections.emptyList(),
                 UserRole.USER
         );
         when(userMapper.toUserDto(userEntity)).thenReturn(mappedUserDto);
@@ -66,13 +65,12 @@ class UserServiceTest {
 
         // then
         assertNotNull(result);
-        assertEquals(TestConstants.USER_NAME, result.username());
-        assertEquals(TestConstants.USER_EMAIL, result.email());
+        assertEquals(TestConstants.USER_NAME, result.getUsername());
+        assertEquals(TestConstants.USER_EMAIL, result.getEmail());
         assertEquals(
                 userEntity.getRegistrationDate(),
-                result.registrationDate()
+                result.getRegistrationDate()
         );
-        assertTrue(result.orders().isEmpty());
 
         verify(userRepository).findById(TestConstants.USER_ID);
         verify(userMapper).toUserDto(userEntity);

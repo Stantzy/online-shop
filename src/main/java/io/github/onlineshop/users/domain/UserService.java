@@ -1,6 +1,5 @@
 package io.github.onlineshop.users.domain;
 
-import io.github.onlineshop.orders.api.dto.OrderDto;
 import io.github.onlineshop.security.UserRole;
 import io.github.onlineshop.users.UserMapper;
 import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
@@ -13,6 +12,7 @@ import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.database.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,25 +20,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private static final Logger log =
         LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository repository;
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
-
-    public UserService(
-        UserRepository repository,
-        UserMapper mapper,
-        PasswordEncoder encoder
-    ) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.encoder = encoder;
-    }
 
     public List<UserDto> getAllUsers(
         UserPaginationRequest pagination
@@ -74,9 +65,9 @@ public class UserService {
 
         User userToSave = new User(
             null,
-            userToCreate.username(),
-            userToCreate.email(),
-            encoder.encode(userToCreate.password()),
+            userToCreate.getUsername(),
+            userToCreate.getEmail(),
+            encoder.encode(userToCreate.getPassword()),
             LocalDate.now(),
             null,
             UserRole.USER
@@ -95,8 +86,8 @@ public class UserService {
         log.info(
             "Called method updateUser: userId={}, newUsername={}, newEmail={}",
             id,
-            userToModify.username(),
-            userToModify.email()
+            userToModify.getUsername(),
+            userToModify.getEmail()
         );
 
         UserEntity entityToUpdate =
@@ -105,14 +96,14 @@ public class UserService {
                     "Not found user by id " + id)
                 );
 
-        validateUnique("username", userToModify.username());
-        validateUnique("email", userToModify.email());
+        validateUnique("username", userToModify.getUsername());
+        validateUnique("email", userToModify.getEmail());
 
-        if(!strIsNullOrIsBlank(userToModify.username()))
-            entityToUpdate.setUsername(userToModify.username());
+        if(!strIsNullOrIsBlank(userToModify.getUsername()))
+            entityToUpdate.setUsername(userToModify.getUsername());
 
-        if(!strIsNullOrIsBlank(userToModify.email()))
-            entityToUpdate.setEmail(userToModify.email());
+        if(!strIsNullOrIsBlank(userToModify.getEmail()))
+            entityToUpdate.setEmail(userToModify.getEmail());
 
         UserEntity updatedEntity = repository.save(entityToUpdate);
 
@@ -132,13 +123,13 @@ public class UserService {
                 );
 
         boolean isMatch = encoder.matches(
-            passwordChangeRequest.oldPassword(), userEntity.getPasswordHash()
+            passwordChangeRequest.getOldPassword(), userEntity.getPasswordHash()
         );
         if(!isMatch) {
             throw new IllegalArgumentException("Old password is wrong");
         }
         userEntity.setPasswordHash(
-            encoder.encode(passwordChangeRequest.newPassword())
+            encoder.encode(passwordChangeRequest.getNewPassword())
         );
         repository.save(userEntity);
 

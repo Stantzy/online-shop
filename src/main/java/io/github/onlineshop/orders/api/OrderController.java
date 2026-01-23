@@ -6,6 +6,7 @@ import io.github.onlineshop.orders.domain.OrderService;
 import io.github.onlineshop.security.domain.CurrentUserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -15,20 +16,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping(PathConstants.ORDER)
+@RequiredArgsConstructor
 public class OrderController {
     private static final Logger log =
         LoggerFactory.getLogger(OrderController.class);
 
     private final OrderService orderService;
     private final CurrentUserService currentUserService;
-
-    public OrderController(
-        OrderService orderService,
-        CurrentUserService currentUserService
-    ) {
-        this.orderService = orderService;
-        this.currentUserService = currentUserService;
-    }
 
     @GetMapping
     public ResponseEntity<List<OrderDto>> getAllOrders() {
@@ -62,8 +56,8 @@ public class OrderController {
     ) {
         log.info(
             "Called method addItemToCart: productId={}, quantity={}",
-            addToCartRequest.productId(),
-            addToCartRequest.quantity()
+            addToCartRequest.getProductId(),
+            addToCartRequest.getQuantity()
         );
 
         Long userId = currentUserService.getUserId();

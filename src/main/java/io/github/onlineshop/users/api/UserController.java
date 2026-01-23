@@ -12,11 +12,11 @@ import io.github.onlineshop.users.api.dto.response.UserModifyResponse;
 import io.github.onlineshop.users.domain.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,20 +25,13 @@ import java.util.List;
 @RestController
 @RequestMapping(PathConstants.USER)
 @Validated
+@RequiredArgsConstructor
 public class UserController {
     private static final Logger log =
         LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
     private final CurrentUserService currentUserService;
-
-    public UserController(
-        UserService userService,
-        CurrentUserService currentUserService
-    ) {
-        this.userService = userService;
-        this.currentUserService = currentUserService;
-    }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(
@@ -82,8 +75,8 @@ public class UserController {
     ) {
         log.info(
             "Called updateCurrentUserInfo: {}, {}",
-            request.username(),
-            request.email()
+            request.getUsername(),
+            request.getEmail()
         );
 
         Long userId = currentUserService.getUserId();

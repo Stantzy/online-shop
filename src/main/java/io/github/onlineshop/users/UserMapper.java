@@ -13,15 +13,13 @@ import java.util.List;
 
 @Component
 public class UserMapper {
-    public UserMapper() {}
-
     public UserDto toUserDto(User user) {
         return new UserDto(
-            user.id(),
-            user.username(),
-            user.email(),
-            user.registrationDate(),
-            user.role()
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getRegistrationDate(),
+            user.getRole()
         );
     }
 
@@ -37,22 +35,22 @@ public class UserMapper {
 
     public User toDomainUser(UserDto userDto) {
         return new User(
-            userDto.id(),
-            userDto.username(),
-            userDto.email(),
+            userDto.getId(),
+            userDto.getUsername(),
+            userDto.getEmail(),
             null,
-            userDto.registrationDate(),
+            userDto.getRegistrationDate(),
             null,
-            userDto.role()
+            userDto.getRole()
         );
     }
 
     public User toDomainUser(UserCreateRequest userToCreate) {
         return new User(
             null,
-            userToCreate.username(),
-            userToCreate.email(),
-            userToCreate.password(),
+            userToCreate.getUsername(),
+            userToCreate.getEmail(),
+            userToCreate.getPassword(),
             null,
             null,
             UserRole.USER
@@ -74,12 +72,12 @@ public class UserMapper {
     public UserEntity toUserEntity(User user) {
         UserEntity userEntity = new UserEntity();
 
-        userEntity.setId(user.id());
-        userEntity.setUsername(user.username());
-        userEntity.setEmail(user.email());
-        userEntity.setPasswordHash(user.passwordHash());
-        userEntity.setRegistrationDate(user.registrationDate());
-        userEntity.setRole(user.role());
+        userEntity.setId(user.getId());
+        userEntity.setUsername(user.getUsername());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setPasswordHash(user.getPasswordHash());
+        userEntity.setRegistrationDate(user.getRegistrationDate());
+        userEntity.setRole(user.getRole());
 
         return userEntity;
     }

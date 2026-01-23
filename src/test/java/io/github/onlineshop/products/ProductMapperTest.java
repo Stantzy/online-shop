@@ -34,10 +34,10 @@ public class ProductMapperTest {
 
         ProductDto result = productMapper.toProductDto(input);
 
-        assertEquals(result.id(), expected.id());
-        assertEquals(result.name(), expected.name());
-        assertEquals(result.quantity(), expected.quantity());
-        assertEquals(result.price(), expected.price());
+        assertEquals(result.getId(), expected.getId());
+        assertEquals(result.getName(), expected.getName());
+        assertEquals(result.getQuantity(), expected.getQuantity());
+        assertEquals(result.getPrice(), expected.getPrice());
         assertEquals(expected, result);
     }
 
@@ -45,10 +45,10 @@ public class ProductMapperTest {
     void toDomainProduct_validDto_shouldReturnCorrectProductDomain() {
         ProductDto input = initTestProductDto();
         Product expected = new Product(
-            input.id(),
-            input.name(),
-            input.quantity(),
-            input.price()
+            input.getId(),
+            input.getName(),
+            input.getQuantity(),
+            input.getPrice()
         );
 
         Product result = productMapper.toDomainProduct(input);
@@ -71,10 +71,10 @@ public class ProductMapperTest {
 
         ProductDto result = productMapper.toProductDto(input);
 
-        assertEquals(result.id(), expected.id());
-        assertEquals(result.name(), expected.name());
-        assertEquals(result.quantity(), expected.quantity());
-        assertEquals(result.price(), expected.price());
+        assertEquals(result.getId(), expected.getId());
+        assertEquals(result.getName(), expected.getName());
+        assertEquals(result.getQuantity(), expected.getQuantity());
+        assertEquals(result.getPrice(), expected.getPrice());
         assertEquals(expected, result);
     }
 
@@ -100,10 +100,10 @@ public class ProductMapperTest {
     void toProductEntity_validDto_shouldReturnCorrectEntity() {
         ProductDto input = initTestProductDto();
         ProductEntity expected = new ProductEntity();
-        expected.setId(input.id());
-        expected.setName(input.name());
-        expected.setQuantity(input.quantity());
-        expected.setPrice(input.price());
+        expected.setId(input.getId());
+        expected.setName(input.getName());
+        expected.setQuantity(input.getQuantity());
+        expected.setPrice(input.getPrice());
 
         ProductEntity result = productMapper.toProductEntity(input);
 

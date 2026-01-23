@@ -3,11 +3,15 @@ package io.github.onlineshop.orders.database;
 import io.github.onlineshop.orders.OrderStatus;
 import io.github.onlineshop.users.database.UserEntity;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "orders")
+@Data
+@NoArgsConstructor
 public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,38 +32,4 @@ public class OrderEntity {
         orphanRemoval = true
     )
     private List<OrderLineEntity> orderLines;
-
-    public OrderEntity() {}
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public UserEntity getUserEntity() {
-        return userEntity;
-    }
-
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
-    }
-
-    public List<OrderLineEntity> getOrderLines() {
-        return orderLines;
-    }
-
-    public void setOrderLines(List<OrderLineEntity> orderLines) {
-        this.orderLines = orderLines;
-    }
 }

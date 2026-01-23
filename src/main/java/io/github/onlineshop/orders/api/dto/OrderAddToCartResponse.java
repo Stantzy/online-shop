@@ -1,13 +1,14 @@
 package io.github.onlineshop.orders.api.dto;
 
+import lombok.Value;
+
 import java.math.BigDecimal;
 import java.util.List;
 
-public record OrderAddToCartResponse(
-    Long cartId,
-    Long totalItems,
-    BigDecimal totalPrice,
-    List<OrderLineDto> cartItems
-) {
-
+@Value
+public class OrderAddToCartResponse {
+    Long cartId;
+    Long totalItems;
+    BigDecimal totalPrice;
+    List<OrderLineDto> cartItems;
 }

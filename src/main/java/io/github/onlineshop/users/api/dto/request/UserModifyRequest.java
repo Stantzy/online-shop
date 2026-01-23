@@ -1,12 +1,15 @@
 package io.github.onlineshop.users.api.dto.request;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
+import lombok.Value;
 
-public record UserModifyRequest(
-    String username,
+@Value
+public class UserModifyRequest {
+    @Nullable
+    String username;
 
+    @Nullable
     @Email(message = "Wrong email address format")
-    String email
-) {
-
+    String email;
 }

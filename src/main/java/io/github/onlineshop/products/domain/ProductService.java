@@ -9,6 +9,7 @@ import io.github.onlineshop.products.database.ProductRepository;
 import io.github.onlineshop.products.domain.exception.ProductAlreadyExistsException;
 import io.github.onlineshop.products.domain.exception.ProductInUseException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
     private static final Logger log =
         LoggerFactory.getLogger(ProductService.class);
@@ -24,16 +26,6 @@ public class ProductService {
     private final ProductRepository repository;
     private final ProductMapper mapper;
     private final OrderLineRepository orderLineRepository;
-
-    public ProductService(
-        ProductRepository repository,
-        ProductMapper mapper,
-        OrderLineRepository orderLineRepository
-    ) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.orderLineRepository = orderLineRepository;
-    }
 
     public List<ProductDto> getAllProducts() {
         log.info("Called method getAllProducts");
@@ -73,8 +65,8 @@ public class ProductService {
     public ProductDto createProduct(ProductDto productToCreate) {
         log.info("Called method createProduct");
 
-        if(repository.existsByName(productToCreate.name()))
-            throw new ProductAlreadyExistsException(productToCreate.name());
+        if(repository.existsByName(productToCreate.getName()))
+            throw new ProductAlreadyExistsException(productToCreate.getName());
 
         ProductEntity productEntityToSave =
             mapper.toProductEntity(productToCreate);
@@ -90,17 +82,17 @@ public class ProductService {
                 "Not found product by id = " + id)
             );
 
-        if(productToUpdate.price().compareTo(BigDecimal.ZERO) < 0) {
+        if(productToUpdate.getPrice().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Price can't be negative");
         }
 
-        if(productToUpdate.quantity() < 0) {
+        if(productToUpdate.getQuantity() < 0) {
             throw new IllegalArgumentException("Quantity can't be negative");
         }
 
-        entityToUpdate.setName(productToUpdate.name());
-        entityToUpdate.setQuantity(productToUpdate.quantity());
-        entityToUpdate.setPrice(productToUpdate.price());
+        entityToUpdate.setName(productToUpdate.getName());
+        entityToUpdate.setQuantity(productToUpdate.getQuantity());
+        entityToUpdate.setPrice(productToUpdate.getPrice());
         repository.save(entityToUpdate);
 
         return mapper.toProductDto(entityToUpdate);

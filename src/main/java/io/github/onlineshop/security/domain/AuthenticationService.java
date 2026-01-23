@@ -8,6 +8,7 @@ import io.github.onlineshop.users.api.dto.request.UserCreateRequest;
 import io.github.onlineshop.security.api.dto.RegistrationResponse;
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
 import io.github.onlineshop.users.domain.UserService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
     private static final Logger log =
         LoggerFactory.getLogger(AuthenticationService.class);
@@ -28,31 +30,20 @@ public class AuthenticationService {
     private final UserService userService;
     private final JwtTokenUtils jwtTokenUtils;
 
-    public AuthenticationService(
-        AuthenticationManager authenticationManager,
-        UserDetailsService userDetailsService,
-        UserService userService,
-        JwtTokenUtils jwtTokenUtils
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.userService = userService;
-        this.jwtTokenUtils = jwtTokenUtils;
-    }
-
     public JwtResponse generateToken(JwtRequest authRequest) {
         try {
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    authRequest.username(), authRequest.password()
+                    authRequest.getUsername(), authRequest.getPassword()
                 )
             );
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException(e.getMessage());
         }
 
-        UserPrincipal user =
-            (UserPrincipal) userDetailsService.loadUserByUsername(authRequest.username());
+        UserPrincipal user = (UserPrincipal) userDetailsService
+            .loadUserByUsername(authRequest.getUsername());
+
         String token = jwtTokenUtils.generateToken(user);
 
         return new JwtResponse(token);
@@ -64,13 +55,13 @@ public class AuthenticationService {
 
         if(newUser != null) {
             jwtToken = generateToken(
-                new JwtRequest(request.username(), request.password())
+                new JwtRequest(request.getUsername(), request.getPassword())
             );
         }
 
         return new RegistrationResponse(
             newUser,
-            Objects.requireNonNull(jwtToken).jwtToken()
+            Objects.requireNonNull(jwtToken).getJwtToken()
         );
     }
 }

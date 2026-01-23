@@ -5,19 +5,15 @@ import io.github.onlineshop.orders.database.OrderEntity;
 import io.github.onlineshop.orders.database.OrderLineEntity;
 import io.github.onlineshop.orders.domain.OrderLine;
 import io.github.onlineshop.products.ProductMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class OrderLineMapper {
     private final ProductMapper productMapper;
-
-    public OrderLineMapper(
-        ProductMapper productMapper
-    ) {
-        this.productMapper = productMapper;
-    }
 
     public OrderLine toDomainOrderLine(OrderLineEntity orderLineEntity) {
         if(orderLineEntity == null)

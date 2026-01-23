@@ -1,12 +1,13 @@
 package io.github.onlineshop.users.api.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Value;
 
-public record UserPasswordChangeRequest(
+@Value
+public class UserPasswordChangeRequest {
     @NotBlank
-    String oldPassword,
-    @NotBlank
-    String newPassword
-) {
+    String oldPassword;
 
+    @NotBlank
+    String newPassword;
 }

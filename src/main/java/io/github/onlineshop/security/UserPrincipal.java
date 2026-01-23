@@ -1,5 +1,7 @@
 package io.github.onlineshop.security;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,26 +9,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class UserPrincipal implements UserDetails {
-    private final Long id;
-    private final String username;
-    private final String email;
+    @Getter private final Long id;
+    @Getter private final String username;
+    @Getter private final String email;
     private final String hash;
     private final UserRole role;
-
-    public UserPrincipal(
-        Long id,
-        String username,
-        String email,
-        String hash,
-        UserRole role
-    ) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.hash = hash;
-        this.role = role;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -43,35 +32,6 @@ public class UserPrincipal implements UserDetails {
     @Override
     public String getPassword() {
         return hash;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public Long getId() { return id; }
-
-    public String getEmail() { return email; }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
     @Override

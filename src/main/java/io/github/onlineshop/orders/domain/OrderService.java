@@ -18,6 +18,7 @@ import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.database.UserRepository;
 import io.github.onlineshop.users.domain.User;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
     private static final Logger log =
         LoggerFactory.getLogger(OrderService.class);
@@ -40,26 +42,6 @@ public class OrderService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ProductRepository productRepository;
-
-    public OrderService(
-        OrderRepository orderRepository,
-        OrderMapper orderMapper,
-        OrderLineRepository orderLineRepository,
-        UserRepository userRepository,
-        UserMapper userMapper,
-        ProductRepository productRepository,
-        ProductMapper productMapper,
-        OrderLineMapper orderLineMapper
-    ) {
-        this.orderRepository = orderRepository;
-        this.orderMapper = orderMapper;
-        this.orderLineRepository = orderLineRepository;
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.productRepository = productRepository;
-        this.productMapper = productMapper;
-        this.orderLineMapper = orderLineMapper;
-    }
 
     public List<OrderDto> getAllOrders() {
         log.info("Called method getAllOrders");
@@ -119,7 +101,7 @@ public class OrderService {
     ) {
         log.info(
             "Called method addItemToCart: productId={}, quantity={}",
-            request.productId(), request.quantity()
+            request.getProductId(), request.getQuantity()
         );
 
         // getUserOrThrow()
@@ -135,21 +117,21 @@ public class OrderService {
 
         // getProductOrThrow()
         ProductEntity productEntity =
-            productRepository.findById(request.productId())
+            productRepository.findById(request.getProductId())
                 .orElseThrow(
                     () -> new EntityNotFoundException(
-                        "Not found product with id=" + request.productId()
+                        "Not found product with id=" + request.getProductId()
                     )
                 );
         Product domainProduct = productMapper.toDomainProduct(productEntity);
 
-        domainProduct.checkProductAvailability(request.quantity());
+        domainProduct.checkProductAvailability(request.getQuantity());
 
         OrderLine orderLine = new OrderLine(
             null,
             domainProduct,
             domainProduct.getPrice(),
-            request.quantity(),
+            request.getQuantity(),
             cart
         );
 
@@ -157,7 +139,7 @@ public class OrderService {
         lines.add(orderLine);
         cart.setOrderLines(lines);
 
-        domainProduct.decreaseQuantity(request.quantity());
+        domainProduct.decreaseQuantity(request.getQuantity());
 
         OrderEntity cartEntity = orderMapper.toOrderEntity(cart, userEntity);
         List<OrderLineEntity> orderLineEntityList =

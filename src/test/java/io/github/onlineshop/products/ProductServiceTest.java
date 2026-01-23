@@ -65,9 +65,9 @@ public class ProductServiceTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(NAME, result.name());
-        assertEquals(QUANTITY, result.quantity());
-        assertEquals(PRICE, result.price());
+        assertEquals(NAME, result.getName());
+        assertEquals(QUANTITY, result.getQuantity());
+        assertEquals(PRICE, result.getPrice());
 
         verify(mapper).toProductEntity(inputDto);
         verify(repository).save(entityToSave);
@@ -84,13 +84,13 @@ public class ProductServiceTest {
         entityToSave.setQuantity(QUANTITY);
         entityToSave.setPrice(PRICE);
 
-        when(repository.existsByName(inputDto.name())).thenReturn(true);
+        when(repository.existsByName(inputDto.getName())).thenReturn(true);
 
         // Act & Assert
         assertThatThrownBy(() ->productService.createProduct(inputDto))
             .isInstanceOf(ProductAlreadyExistsException.class);
 
-        verify(repository).existsByName(inputDto.name());
+        verify(repository).existsByName(inputDto.getName());
         verify(mapper, never()).toProductDto((ProductEntity) any());
 
     }
@@ -116,9 +116,9 @@ public class ProductServiceTest {
 
         // Assert
         assertThat(result).isNotNull();
-        assertThat(result.name()).isEqualTo(NAME);
-        assertThat(result.quantity()).isEqualTo(QUANTITY);
-        assertThat(result.price()).isEqualByComparingTo(PRICE);
+        assertThat(result.getName()).isEqualTo(NAME);
+        assertThat(result.getQuantity()).isEqualTo(QUANTITY);
+        assertThat(result.getPrice()).isEqualByComparingTo(PRICE);
 
         verify(repository).findById(VALID_ID);
         verify(mapper).toProductDto(optFoundEntity.get());

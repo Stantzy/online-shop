@@ -1,15 +1,13 @@
 package io.github.onlineshop.security;
 
 import io.github.onlineshop.users.database.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
-
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public UserPrincipal loadUserByUsername(String username) {
         return userRepository.findByUsername(username)

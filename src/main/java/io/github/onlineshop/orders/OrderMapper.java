@@ -7,17 +7,15 @@ import io.github.onlineshop.orders.domain.Order;
 import io.github.onlineshop.orders.domain.OrderLine;
 import io.github.onlineshop.users.database.UserEntity;
 import io.github.onlineshop.users.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class OrderMapper {
     private final OrderLineMapper orderLineMapper;
-
-    public OrderMapper(OrderLineMapper orderLineMapper) {
-        this.orderLineMapper = orderLineMapper;
-    }
 
     public OrderDto toOrderDto(Order order) {
         List<Long> productIds = order.getOrderLines()
@@ -27,7 +25,7 @@ public class OrderMapper {
 
         return new OrderDto(
             order.getId(),
-            order.getUser().id(),
+            order.getUser().getId(),
             productIds,
             order.getOrderStatus()
         );
@@ -56,9 +54,9 @@ public class OrderMapper {
 
         OrderEntity orderEntity = new OrderEntity();
 
-        orderEntity.setId(orderDto.orderId());
+        orderEntity.setId(orderDto.getOrderId());
         orderEntity.setUserEntity(userEntity);
-        orderEntity.setOrderStatus(orderDto.orderStatus());
+        orderEntity.setOrderStatus(orderDto.getOrderStatus());
 
         return orderEntity;
     }

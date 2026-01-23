@@ -1,10 +1,10 @@
 package io.github.onlineshop.security.api.dto;
 
 import io.github.onlineshop.users.api.dto.response.UserCreateResponse;
+import lombok.Value;
 
-public record RegistrationResponse(
-    UserCreateResponse user,
-    String jwtToken
-) {
-
+@Value
+public class RegistrationResponse {
+    UserCreateResponse user;
+    String jwtToken;
 }

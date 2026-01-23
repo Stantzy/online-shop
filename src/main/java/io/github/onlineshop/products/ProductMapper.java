@@ -27,10 +27,10 @@ public class ProductMapper {
 
     public Product toDomainProduct(ProductDto productDto) {
         return new Product(
-            productDto.id(),
-            productDto.name(),
-            productDto.quantity(),
-            productDto.price()
+            productDto.getId(),
+            productDto.getName(),
+            productDto.getQuantity(),
+            productDto.getPrice()
         );
     }
 
@@ -46,10 +46,10 @@ public class ProductMapper {
     public ProductEntity toProductEntity(ProductDto productDto) {
         ProductEntity productEntity = new ProductEntity();
 
-        productEntity.setId(productDto.id());
-        productEntity.setName(productDto.name());
-        productEntity.setQuantity(productDto.quantity());
-        productEntity.setPrice(productDto.price());
+        productEntity.setId(productDto.getId());
+        productEntity.setName(productDto.getName());
+        productEntity.setQuantity(productDto.getQuantity());
+        productEntity.setPrice(productDto.getPrice());
 
         return productEntity;
     }
