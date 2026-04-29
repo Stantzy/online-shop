@@ -19,6 +19,21 @@ I wanted to understand how REST APIs work under the hood and gain hands-on exper
 - Lombok
 
 ---
+## Screenshots
+
+Menu page      |  Product page
+:------------------------:|:-------------------------:
+<img width="1903" height="928" alt="menu_page" src="https://github.com/user-attachments/assets/798da064-1aea-4830-9c53-0a139ea7047d" /> |  <img width="1903" height="928" alt="product_page" src="https://github.com/user-attachments/assets/e44f36b9-09b6-4d17-936d-878e95120ddd" />
+
+Cart  |  Admin Panel
+:------------------------:|:-------------------------:
+<img width="1920" height="926" alt="cart_page" src="https://github.com/user-attachments/assets/17221848-7572-49da-b566-a30508eedd79" /> | <img width="1920" height="926" alt="admin_panel" src="https://github.com/user-attachments/assets/e6efb02c-c581-45b2-9cff-b6d675f1f392" />
+
+Login page  |  Register page
+:------------------------:|:-------------------------:
+<img width="1920" height="929" alt="login_page" src="https://github.com/user-attachments/assets/c0c3f184-3fa8-4e5c-9243-7ea219f25605" /> | <img width="1920" height="926" alt="register_page" src="https://github.com/user-attachments/assets/170315ce-83a2-4f99-8589-38e49a84ed55" />
+
+---
 ## Functionality
 
 ### Authentication
