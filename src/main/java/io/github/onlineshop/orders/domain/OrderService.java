@@ -53,6 +53,17 @@ public class OrderService {
             .toList();
     }
 
+    public List<OrderDto> getAllOrdersByStatus(OrderStatus status) {
+        log.info("Called method getAllOrdersByStatus");
+
+        List<OrderEntity> orderEntities =
+            orderRepository.findByOrderStatus(status);
+
+        return orderEntities.stream()
+            .map(orderMapper::toOrderDto)
+            .toList();
+    }
+
     public OrderDto getOrderById(Long id) {
         log.info("Called method getOrderById: id={}", id);
 
@@ -87,6 +98,7 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
+    // ============== НЕ ВОЗВРАЩАЕТ ТОВАРЫ ОБРАТНО ===============
     public void clearCart(Long userId) {
         log.info("Called method clearCart: userId={}", userId);
 
@@ -297,7 +309,90 @@ public class OrderService {
         return orderMapper.toDomainOrder(cartEntityOptional.get());
     }
 
-    // TODO approveOrder()
-    // TODO getOrdersByUser() / getOrdersByUserId()
-    // TODO changeOrderStatus()
+    public OrderDto checkout(Long userId) {
+        OrderEntity cartEntity = orderRepository.findCartByUserId(userId)
+            .orElseThrow(
+                () -> new EntityNotFoundException(
+                    "Cart not found by user id = " + userId
+                )
+            );
+
+        Order cart = orderMapper.toDomainOrder(cartEntity);
+        if(cart.getOrderLines() == null || cart.getOrderLines().isEmpty()) {
+            throw new IllegalStateException("Cart is empty");
+        }
+
+        cart.setOrderStatus(OrderStatus.CREATED);
+
+        UserEntity userEntity = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        OrderEntity orderEntity = orderMapper.toOrderEntity(cart, userEntity);
+        orderEntity.setOrderLines(
+            orderLineMapper
+                .toListOfOrderLineEntities(cart.getOrderLines(), orderEntity)
+        );
+
+        OrderEntity savedOrder = orderRepository.save(orderEntity);
+
+        return orderMapper.toOrderDto(savedOrder);
+    }
+
+    public List<OrderDto> getOrdersByUserId(Long userId) {
+        UserEntity userEntity = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<OrderEntity> orderEntityList = userEntity.getOrders();
+        List<OrderDto> orderDtoList = new ArrayList<>();
+
+        for(OrderEntity orderEntity : orderEntityList) {
+            OrderDto orderDto = orderMapper.toOrderDto(orderEntity);
+            orderDtoList.add(orderDto);
+        }
+
+        return orderDtoList;
+    }
+
+    public BigDecimal getTotalByUserId(Long userId) {
+        UserEntity userEntity = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        BigDecimal total = BigDecimal.ZERO;
+        List<OrderEntity> orderEntityList = userEntity.getOrders();
+
+        for(OrderEntity orderEntity : orderEntityList) {
+            Order order = orderMapper.toDomainOrder(orderEntity);
+
+            BigDecimal currentOrderTotal = order.getTotalPrice();
+            total = total.add(currentOrderTotal);
+        }
+
+        return total;
+    }
+
+    public OrderDto updateOrderStatus(Long orderId, OrderStatus status) {
+        if(status == OrderStatus.CART) {
+            throw new IllegalArgumentException("Status can't be set to 'CART'");
+        }
+
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+            .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        Order order = orderMapper.toDomainOrder(orderEntity);
+
+        if(
+            status != OrderStatus.DELETED &&
+            order.getOrderStatus() == OrderStatus.DELETED
+        ) {
+            throw new IllegalArgumentException(
+                "Deleted order can't be updated"
+            );
+        }
+        order.setOrderStatus(status);
+
+        OrderEntity orderEntityToSave =
+            orderMapper.toOrderEntity(order, orderEntity.getUserEntity());
+        OrderEntity savedOrderEntity = orderRepository.save(orderEntityToSave);
+
+        return orderMapper.toOrderDto(savedOrderEntity);
+    }
 }

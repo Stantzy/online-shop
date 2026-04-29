@@ -14,13 +14,37 @@ public class CurrentUserService {
         Authentication auth =
             SecurityContextHolder.getContext().getAuthentication();
 
-        if(auth == null || !auth.isAuthenticated()) {
+        if(auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             throw new
                 AuthenticationCredentialsNotFoundException("Not authenticated");
         }
 
-        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+        Object principal = auth.getPrincipal();
 
-        return userPrincipal.getId();
+        if(principal instanceof UserPrincipal) {
+            return ((UserPrincipal) principal).getId();
+        }
+
+        // Для случая, когда principal - это String (например, после form-login)
+        if(principal instanceof String) {
+            throw new AuthenticationCredentialsNotFoundException(
+                "User not fully loaded. Please login again.");
+        }
+
+        throw new AuthenticationCredentialsNotFoundException("Unknown principal type");
+    }
+
+    public boolean isAuthenticated() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal());
+    }
+
+    public UserPrincipal getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if(auth != null && auth.getPrincipal() instanceof UserPrincipal) {
+            return (UserPrincipal) auth.getPrincipal();
+        }
+        return null;
     }
 }

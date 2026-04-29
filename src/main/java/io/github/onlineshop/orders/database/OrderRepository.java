@@ -1,5 +1,6 @@
 package io.github.onlineshop.orders.database;
 
+import io.github.onlineshop.orders.OrderStatus;
 import io.github.onlineshop.users.database.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     List<OrderEntity> findByUserEntity(UserEntity userEntity);
+    List<OrderEntity> findByOrderStatus(OrderStatus orderStatus);
 
     @Query(
         "SELECT o FROM OrderEntity o " +

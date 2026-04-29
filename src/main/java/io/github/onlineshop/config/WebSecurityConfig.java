@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,18 +21,25 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class WebSecurityConfig {
     private final static Logger log =
-        LoggerFactory.getLogger(SecurityConfig.class);
+        LoggerFactory.getLogger(WebSecurityConfig.class);
 
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final JwtFilter jwtFilter;
 
-    public SecurityConfig(JwtFilter jwtFilter) {
+    public WebSecurityConfig(
+        JwtFilter jwtFilter,
+        AuthenticationSuccessHandler authenticationSuccessHandler
+    ) {
         this.jwtFilter = jwtFilter;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
     }
 
     @Bean
@@ -51,19 +59,44 @@ public class SecurityConfig {
     throws Exception {
         log.info("Creating SecurityFilterChain bean");
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**", "/auth/**")
+            )
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(
                 auth -> {
-                    configurePublicEndpoints(auth);
-                    configureAuthenticatedEndpoints(auth);
-                    configureAdminEndpoints(auth);
-                    auth.anyRequest().denyAll();
+                    // WEB ENDPOINTS
+                    configureWebEndpoints(auth);
+
+                    // REST API ENDPOINTS
+                    configureApiEndpoints(auth);
+                    auth.requestMatchers("/api/**").authenticated();
+
+                    // OTHER
+                    auth.anyRequest().permitAll(); // denyAll();
                 }
             )
+            .formLogin(form -> form
+                .loginPage("/auth/login")
+                .loginProcessingUrl("/auth/login")
+                .successHandler(authenticationSuccessHandler)
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/auth/logout")
+                .logoutSuccessUrl("/products")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            )
+            .exceptionHandling(ex -> ex
+                .defaultAuthenticationEntryPointFor(
+                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                    request -> request.getRequestURI().startsWith("/api")
+                )
             )
             .addFilterBefore(
                 jwtFilter,
@@ -81,7 +114,39 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    private void configurePublicEndpoints(
+    private void configureWebEndpoints(
+        AuthorizeHttpRequestsConfigurer<HttpSecurity>
+            .AuthorizationManagerRequestMatcherRegistry auth
+    ) {
+        // PUBLIC ENDPOINTS
+        auth.requestMatchers(
+            "/",
+            "/products/**",
+            "/auth/**"
+        ).permitAll();
+
+        // ADMIN ENDPOINTS
+        auth.requestMatchers("/admin/**").hasRole("ADMIN");
+
+        // AUTHENTICATED ENDPOINTS
+        auth.requestMatchers(
+            "/cart/**",
+            "/orders/**",
+            "/profile/**"
+        ).authenticated();
+
+    }
+
+    private void configureApiEndpoints(
+        AuthorizeHttpRequestsConfigurer<HttpSecurity>
+            .AuthorizationManagerRequestMatcherRegistry auth
+    ) {
+        configureApiPublicEndpoints(auth);
+        configureApiAuthenticatedEndpoints(auth);
+        configureApiAdminEndpoints(auth);
+    }
+
+    private void configureApiPublicEndpoints(
         AuthorizeHttpRequestsConfigurer<HttpSecurity>
             .AuthorizationManagerRequestMatcherRegistry auth
     ) {
@@ -94,7 +159,7 @@ public class SecurityConfig {
         auth.requestMatchers(HttpMethod.GET, PathConstants.PRODUCT).permitAll();
     }
 
-    private void configureAuthenticatedEndpoints(
+    private void configureApiAuthenticatedEndpoints(
         AuthorizeHttpRequestsConfigurer<HttpSecurity>
             .AuthorizationManagerRequestMatcherRegistry auth
     ) {
@@ -121,7 +186,7 @@ public class SecurityConfig {
         auth.requestMatchers(HttpMethod.PUT, PathConstants.USER + "/me").authenticated();
     }
 
-    private void configureAdminEndpoints(
+    private void configureApiAdminEndpoints(
         AuthorizeHttpRequestsConfigurer<HttpSecurity>
             .AuthorizationManagerRequestMatcherRegistry auth
     ) {

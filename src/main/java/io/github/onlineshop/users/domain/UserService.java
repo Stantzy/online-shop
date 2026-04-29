@@ -31,10 +31,20 @@ public class UserService {
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
 
+    public List<UserDto> getAllUsers() {
+        log.info("Called getAllUsers");
+
+        List<UserEntity> userEntities = repository.findAll();
+
+        return userEntities.stream()
+            .map(mapper::toUserDto)
+            .toList();
+    }
+
     public List<UserDto> getAllUsers(
         UserPaginationRequest pagination
     ) {
-        log.info("Called getAllUsers");
+        log.info("Called getAllUsers with pagination");
 
         List<UserEntity> userEntities =
             repository.findAll(pagination.toPageable()).toList();
@@ -138,6 +148,24 @@ public class UserService {
 
     public void deleteUserById(Long id) {
         log.info("Called method deleteUserById: id={}", id);
+
+        UserEntity userEntity = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Not found user by id=" + id)
+            );
+
+        if(!userEntity.getOrders().isEmpty()) {
+            throw new IllegalStateException(
+                "Can't delete the user with active orders"
+            );
+        }
+
+        if(userEntity.getRole() == UserRole.ADMIN) {
+            throw new IllegalStateException(
+                "Can't delete admin user"
+            );
+        }
+
         repository.deleteById(id);
     }
 

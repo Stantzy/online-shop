@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог товаров</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/products">OnlineShop</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/cart">Корзина</a>
+            <a class="nav-link" href="/orders">Заказы</a>
+
+            <th:block sec:authorize="isAuthenticated()">
+                <span class="navbar-text me-2">
+                    <span sec:authentication="name"></span>
+                </span>
+                <a class="nav-link" href="/auth/logout">Выйти</a>
+            </th:block>
+
+            <th:block sec:authorize="!isAuthenticated()">
+                <a class="nav-link" href="/auth/login">Войти</a>
+            </th:block>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1>Каталог товаров</h1>
+
+    <!-- Сортировка -->
+    <div class="mb-3">
+        <div class="btn-group">
+            <a th:href="@{/products(sortBy=name, sortDirection=ascending)}"
+               class="btn btn-outline-secondary">По названию ↑</a>
+            <a th:href="@{/products(sortBy=name, sortDirection=descending)}"
+               class="btn btn-outline-secondary">По названию ↓</a>
+            <a th:href="@{/products(sortBy=price, sortDirection=ascending)}"
+               class="btn btn-outline-secondary">По цене ↑</a>
+            <a th:href="@{/products(sortBy=price, sortDirection=descending)}"
+               class="btn btn-outline-secondary">По цене ↓</a>
+        </div>
+    </div>
+
+    <!-- Сетка товаров -->
+    <div class="row">
+        <div class="col-md-4 mb-3" th:each="product : ${products}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a th:href="@{/products/{id}(id=${product.id})}"
+                           th:text="${product.name}">Название</a>
+                    </h5>
+                    <p class="card-text">
+                        <strong th:text="${product.price} + ' ₽'">Цена</strong><br>
+                        <span th:if="${product.quantity > 0}" class="text-success">
+                            В наличии: <span th:text="${product.quantity}"></span> шт.
+                        </span>
+                        <span th:unless="${product.quantity > 0}" class="text-danger">
+                            Нет в наличии
+                        </span>
+                    </p>
+
+                    <form th:action="@{/cart/add}" method="post" class="d-inline">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary"
+                                th:disabled="${product.quantity == 0}">
+                            В корзину
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пагинация -->
+    <nav class="mt-4">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/products(pageNumber=${currentPage - 1}, pageSize=${pageSize}, sortBy=${sortBy}, sortDirection=${sortDirection})}">
+                    Назад
+                </a>
+            </li>
+            <li class="page-item active">
+                <span class="page-link" th:text="${currentPage}">1</span>
+            </li>
+            <li class="page-item">
+                <a class="page-link"
+                   th:href="@{/products(pageNumber=${currentPage + 1}, pageSize=${pageSize}, sortBy=${sortBy}, sortDirection=${sortDirection})}">
+                    Вперёд
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

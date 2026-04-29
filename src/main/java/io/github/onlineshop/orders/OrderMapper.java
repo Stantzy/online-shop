@@ -61,7 +61,6 @@ public class OrderMapper {
         return orderEntity;
     }
 
-
     public OrderEntity toOrderEntity(Order order, UserEntity userEntity) {
         if(order == null || userEntity == null)
             return null;

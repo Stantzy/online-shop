@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина | OnlineShop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/products">OnlineShop</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/cart">Корзина</a>
+            <a class="nav-link" href="/orders">Заказы</a>
+
+            <th:block sec:authorize="isAuthenticated()">
+                <span class="navbar-text me-2">
+                    <span sec:authentication="name"></span>
+                </span>
+                <a class="nav-link" href="/auth/logout">Выйти</a>
+            </th:block>
+
+            <th:block sec:authorize="!isAuthenticated()">
+                <a class="nav-link" href="/auth/login">Войти</a>
+            </th:block>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1>Корзина</h1>
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+    <div th:if="${cart == null || cart.orderLineDtoList == null || cart.orderLineDtoList.isEmpty()}">
+        <p>Ваша корзина пуста.</p>
+        <a href="/products" class="btn btn-primary">Перейти в каталог</a>
+    </div>
+
+    <div th:unless="${cart == null || cart.orderLineDtoList == null || cart.orderLineDtoList.isEmpty()}">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Товар</th>
+                <th>ID товара</th>
+                <th>Цена за шт.</th>
+                <th>Количество</th>
+                <th>Сумма</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="line : ${cart.orderLineDtoList}">
+                <td>
+                    <a th:href="@{/products/{id}(id=${line.productId})}">
+                        Товар #<span th:text="${line.productId}">ID</span>
+                    </a>
+                </td>
+                <td th:text="${line.productId}">Product ID</td>
+                <td th:text="${line.priceAtTime} + ' ₽'">Цена</td>
+                <td>
+                    <form th:action="@{/cart/update/{id}(id=${line.id})}"
+                          method="post" class="d-flex align-items-center gap-2">
+                        <input type="number" name="quantity"
+                               th:value="${line.quantity}"
+                               min="1" class="form-control form-control-sm"
+                               style="width: 80px;">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                            Обновить
+                        </button>
+                    </form>
+                </td>
+                <td th:text="${line.priceAtTime * line.quantity} + ' ₽'">Сумма</td>
+                <td>
+                    <form th:action="@{/cart/remove/{id}(id=${line.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="4" class="text-end">
+                    <strong>Товаров: <span th:text="${cart.itemsQuantity}">0</span></strong>
+                </td>
+                <td>
+                    <strong th:text="${cart.totalPrice} + ' ₽'">Итого</strong>
+                </td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="mt-3 d-flex gap-2">
+            <form th:action="@{/cart/checkout}" method="post">
+                <button type="submit" class="btn btn-success btn-lg">Оформить заказ</button>
+            </form>
+            <form th:action="@{/cart/clear}" method="post">
+                <button type="submit" class="btn btn-warning btn-lg"
+                        onclick="return confirm('Очистить корзину?')">
+                    Очистить корзину
+                </button>
+            </form>
+            <a href="/products" class="btn btn-outline-secondary btn-lg">Продолжить покупки</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

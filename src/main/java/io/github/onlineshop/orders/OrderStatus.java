@@ -4,5 +4,6 @@ public enum OrderStatus {
     CART,
     CREATED,
     APPROVED,
-    CANCELLED
+    CANCELLED,
+    DELETED
 }
